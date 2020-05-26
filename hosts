@@ -1,0 +1,1 @@
+fos131 ansible_host=172.16.10.202 ansible_network_os=fortios ansible_user=admin ansible_password=FG_P@ssw0rd

@@ -1,0 +1,64 @@
+# Demo playbook to publish a web server
+# Variables:
+#    srv_name:
+#    srv_address:
+#    srv_vip:
+#    srv_interface:
+#    srv_pub_interface:
+#    srv_port: 80
+#    srv_service_name: "HTTP"
+#    policy_id
+
+
+- hosts: fortigates
+  connection: httpapi
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 443
+    srv_service_name: "HTTP"
+  tasks:
+    - name: Configure IPv4 addresses
+      fortios_firewall_address:
+        vdom:  "{{ vdom }}"
+        state: "present"
+        firewall_address:
+          name: "{{srv_name}}"
+          type: "ipmask"
+          subnet: "{{srv_address}} 255.255.255.255"
+          visibility: "enable"
+
+    - name: Configure VIP
+      fortios_firewall_vip:
+        vdom:  "{{ vdom }}"
+        state: "present"
+        firewall_vip:
+          name: "VIP_{{srv_name}}"
+          extip: "{{srv_vip}}"
+          mappedip:
+            - range: "{{srv_address}}"
+          extintf: "{{srv_pub_interface}}"
+          type: "static-nat"
+
+    - name: Configure IPv4 policy.
+      fortios_firewall_policy:
+        vdom:  "{{ vdom }}"
+        state: "present"
+        firewall_policy:
+          policyid: "{{policy_id}}"
+          name: "Publish_VIP_{{srv_name}}"
+          action: "accept"
+          srcintf:
+            - name: "{{srv_pub_interface}}"
+          dstintf:
+            - name: "{{srv_interface}}"
+          srcaddr:
+            - name: 'all'
+          dstaddr:
+            - name: "VIP_{{srv_name}}"
+          service:
+            - name: "{{srv_service_name}}"
+          schedule: "always"
+          logtraffic: "all"
+          logtraffic_start: "disable"

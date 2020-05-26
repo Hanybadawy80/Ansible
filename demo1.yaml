@@ -1,0 +1,17 @@
+- hosts: fortigates
+  connection: httpapi
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 443
+  tasks:
+  - name: Configure IPv4 addresses
+    fortios_firewall_address:
+      vdom:  "{{ vdom }}"
+      state: "present"
+      firewall_address:
+        name: "Test_1"
+        type: "ipmask"
+        subnet: "10.10.10.10 255.255.255.255"
+        visibility: "enable"

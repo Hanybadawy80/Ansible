@@ -1,0 +1,104 @@
+[
+  {
+    "event_id": "exchange.get_email_new_created",
+    "name": "When Unread Emails is Created",
+    "description": "Run playbook when an unread emails is created",
+    "type": [
+      "PUSH"
+    ],
+    "connector_action": "get_email_new",
+    "connector_action_inputs": {
+      "source": [
+        "Inbox"
+      ],
+      "mark_read": true,
+      "pull_oldest": false,
+      "limit": 100,
+      "parse_inline": "",
+      "save_as_attachment": false,
+      "extract_attach_data": true,
+      "exclude_absolute_path": false
+    },
+    "trigger_condition": {
+      "sort": [],
+      "limit": 30,
+      "logic": "AND",
+      "filters": []
+    },
+    "sample_data": [
+      {
+        "body": {
+          "html": "",
+          "json": "",
+          "text": "Get your gift voucher at gumblar.cn"
+        },
+        "headers": {
+          "to": "fsrinteg@outlook.com",
+          "date": "Sun, 08 Jan 2023 11:32:23 -0800",
+          "from": "Learn <Learn@mails.microsoft.com>",
+          "subject": "Get inspired with free training and documentation",
+          "x-msfbl": "274oL92NloEYfGmR6psoixfkN+fH5dbMfRnk6hQAyyw=|eyJyY3B0X21ldGEiOns\tgImluIjogIm1zY29tX21rdF9wcm9kNiIsICJyIjogImZzcmludGVnQG91dGxvb2s\tuY29tIiwgIm0iOiAiMzA1NTgwMDEiLCAiZCI6ICIxMjI4MjA1MTAiLCAiaSI6ICJ\tFQTc2QURFOTU3NzZEMkVDN0YwMDAxMDFAQWRvYmVPcmciIH0sImciOiJkZWZhdWx\t0XzJmODU2YzNlLTI2NDQtNGZhNS1iMmE3LWVmOWU4ODYyYzgzYSIsInIiOiJmc3J\tpbnRlZ0BvdXRsb29rLmNvbSIsImIiOiJhenVyZV9tc2NvbV9wcm9kNl9kZWZhdWx\t0X21vbWVudHVtNDFfbXRhMDA2XzEzMC4yNDguMTgxLjE3MiJ9",
+          "received": "from [10.139.37.161] ([10.139.37.161:28262] helo=r177.mails.microsoft.com)\tby momentum41.or1.cpt.adobe.net (envelope-from <bounce@mails.microsoft.com>)\t(ecelerity 4.2.38.62370 r(:)) with ESMTP\tid 57/39-10815-B4A1BB36; Sun, 08 Jan 2023 11:32:27 -0800",
+          "reply-to": "noreply <replies@microsoft.com>",
+          "x-mailer": "nlserver, Build 7.0.0.10651",
+          "x-sid-pra": "LEARN@MAILS.MICROSOFT.COM",
+          "message-id": "<AC70000000001D247310752179Emscom_mkt_prod6@mails.microsoft.com>",
+          "return-path": "bounce@mails.microsoft.com",
+          "x-sender-ip": "130.248.181.172",
+          "content-type": "text/html; charset=\"utf-8\"",
+          "mime-version": "1.0",
+          "received-spf": "Pass (protection.outlook.com: domain of mails.microsoft.com designates 130.248.181.172 as permitted sender) receiver=protection.outlook.com; client-ip=130.248.181.172; helo=r172.mails.microsoft.com; pr=C",
+          "x-sid-result": "PASS",
+          "dkim-signature": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=mails.microsoft.com;\ts=mscom; t=1673206347;\tbh=4TppnIhwAsGkuexgBGqFhFHex7gY8bNgzrOs5ru6qIM=;\th=From:Date:Subject:To:MIME-Version:Message-ID:Content-Type;\tb=TDjHSVSz+KgiC1YKn3SnlAmzqyfCI4SD/I12tNRUlW2Rfy2kyjpA41n0oGETFwpUY\t TvebUgAeZ6vQadxDz/3PiysFbXbqwvI4EcNsbz7yTWrMfTm/EwA9Jh6nsI+93+k7OT\t 1mjVxn+WscRo8Vt2/IZF0zpg9Fr82y9Esbk9/ru5hErkgBN8WsRH2s+1w3rV4j/nZy\t 8WMQjeClXZj49tMIhYRnjTrs3fVikohzDAYMZQA6UrLLb6itCRIC/vG8cxS1qdFXZv\t UbbywG7KrzCc3FvAs8F6zM1qPGPzF6doGXDFZqE+Cbz+vdKFVgk5La3G0DdwXFd2gB\t GpTIcazLJFIHw==",
+          "x-message-info": "\tqZelhIiYnPmoAfOtwNJ3lHsCatuKik3unV0bxZi0fjwsSQZ1tIGcj868NDpT/P4LLdUmA4bEIYUGGyTqv1r8YHdhidSiJOia2g3wognlowCP1VhjvlHpb5N8q1y2rwIlhN223CITa+XvlR5EQPaYQ9cbde0COJd4AdYHeWhbMmTS2wU42fxt2Y6ebLwTSqyjs8x9yBx6k7oAFcrKCon4Mw==",
+          "x-message-delivery": "Vj0xLjE7dXM9MDtsPTA7YT0wO0Q9MTtHRD0xO1NDTD0z",
+          "x-microsoft-antispam": "BCL:5;",
+          "x-incomingheadercount": "14",
+          "authentication-results": "spf=pass (sender IP is 130.248.181.172) smtp.mailfrom=mails.microsoft.com; dkim=pass (signature was verified) header.d=mails.microsoft.com;dmarc=pass action=none header.from=mails.microsoft.com;compauth=pass reason=100",
+          "x-eopattributedmessage": "0",
+          "x-ms-publictraffictype": "Email",
+          "x-ms-userlastlogontime": "12/29/2022 6:22:08 AM",
+          "x-ms-exchange-eopdirect": "true",
+          "content-transfer-encoding": "quoted-printable",
+          "x-incomingtopheadermarker": " OriginalChecksum:FD431314D14D929E9E0E22AB679FFD603518B6B2E7FF8201CB12D7D78859930F;UpperCasedChecksum:03A986FFF862353260783D397F746CA7CCC5524CEBF9BC7DA9896419E8092E6A;SizeAsReceived:1805;Count:14",
+          "x-ms-traffictypediagnostic": "DBAEUR03FT011:EE_|SN4PR10MB5558:EE_",
+          "x-eoptenantattributedmessage": "84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa:0",
+          "x-ms-exchange-crosstenant-id": "84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa",
+          "x-ms-exchange-organization-pcl": "2",
+          "x-ms-exchange-organization-scl": "1",
+          "x-ms-exchange-crosstenant-authas": "Anonymous",
+          "x-microsoft-antispam-message-info": "\tWnErTJNusTtjau8KW86htgZy+eELinmYEYslTIMHZOb+YBTTvdo8NRxSNQbpMQuslab3uxRKFCQI+M0fBi5uX2+phTfbOlmOcXdPiQ9lM+b3rg1dQCZGyoLuer5hnLlXaqjCt/9bK+g8lAyeN55USVAr400at+BmcBuFSlhfS1BbpAF8lbNKLhQe49SX3EgXylbZ7EowwD9+2Cfg9drP75ZwFeCEF2Fdy+S8G8JHiwIwjofdSDgClosFg5vvTKX6QQbxIH6g2sMp4/ofobezteW58Fnwvh+J47XHUtbWNji+BeMIhF2f6m5uupPmG+6JelcHsslPLcLFvNurB2IjX0P3s0tCCEqOj4B+AVMWyF9UrN7fo+XL/6xYITwWC3sLQvaZtN9dtqM6lYvZct4PgW89A7qBQIhPYKShq2wTcb3FIZN0bS5qXg2egJM5+igF4iKzYukODkVmJyFwUMjMAgHIJoMuPBMnirlk/pDHV2I7VgaMOLSito9NS4p8oCrozd63OTCWs+1B80ZWryE1EktwWlWvrLBCnzFNz7R72ivyfmJsX8hJO+7ZvrU9twyBlmh3aQgIaVj2JzxqTXbQN3yyD+ximLlhDsC96HndzRnWp3Zy5/rAS0ivybe/5YFo/wppmAvBg6Kz7LAy9JnUhlzn/OTALCd0aaFwMGzvjlVI4i5m9Pj7S5km30pweHNi/6IOk585LeT/VoIrdMMcx1HnKLV3PHelFU0/196aiE7XUjkPujH/4W7nIFZM/Bs4mbTj8YBbqVx590Ax4tAvMgwUa2q7CIcQoQmjH0Uc0s9lJ+q18Pt6VsJxDf7UnHQMozwOSBi+xL9UBjnwwLL3HXZ1uLAwuBLVv8CAifRgaDXtv1WGWt9QwLzL0LyTz2LWVoR+pH8T2UIGi736smT9N47CYLJiXpt0VbGbD4BA8Ve1kQqZZvrtMbE7WvxcBML3euz/9zLPYEXeFJ9MFYM8d0B+NtFO2FW+epntOHblxIrkaFiE2tnt10z434Q7yuwCTGtYlfJTTH9+ehBDjA89+I0ZyJc3i8krgc1KvT93fuy+1HZF/Y0E5Hv/H/De7p6AwE28kevbY1sQIELaJjdt1edhoTz57+6cPELyx21a5vGFlA/aknAByRKgCsB5Xywgu1Q2H9Rf2pofLN2pYuyKTiypaT0xRBjhGIm8Qnqqnn4wHVJfO0ZDJHm3D7dStOJn6TdIB/4eq49FrZB7HX2smSDhhZicUaLQQsiPK0RxFkCSmoTSmysQu2r77GSVRZiw1UmNDMzJmxcOHi41cRvFV6ZZv0zbEjKZHoqGlDXlJUVuxSUYLDHDdHmbXYaToGwUkVjOETd0/kco63tZq4l9X255jvMTaabBBOAo0MLyrwkR/KmoGHWcepXIIwMiEAG9p1BZieMl2k/mY2sy8oOYht3o5aaZ0Anjx4+sEbd/Oi5ec3rBNf5b7biqN4J+DaorIc/PRX6qGgkeTidehD5Ht2CQqNqGh8WQuB9LgTiQ85uTyb38WdplJSuaY5J4Nh57qc0q37MpE1o5GV5B4ac4+Z4BKdAPDvwYvassSg+l/xBZHwKHHQpLeV4YwwXyD6aWaw29jsBbxkKtpS5FHPx4vlZvvKHOjdyHw6GgLwKp9zYhJ+uHOSPEe1ThVuuE0gHRdBYqqKqm43OIrDWVypNi7IWQvCRZNbV7NXPC5HDMLMKbL8G345V4hytfXekIQBxvCYiixr7UMvsBYfT2Qt5unHl+k0U3qzcGKeozzidjDR4=",
+          "x-ms-exchange-organization-authas": "Anonymous",
+          "x-ms-exchange-crosstenant-authsource": " DBAEUR03FT011.eop-EUR03.prod.protection.outlook.com",
+          "x-microsoft-antispam-mailbox-delivery": "\tabwl:0;wl:0;pcwl:0;kl:0;dwl:0;dkl:0;rwl:0;ucf:0;jmr:0;ex:0;auth:1;dest:I;ENG:(5062000305)(90000117)(90010023)(91010020)(91040095)(5061607266)(5061608174)(9050020)(9100338)(4810004)(4910033)(8820095)(9575002)(10195002)(9320005);",
+          "x-ms-exchange-organization-authsource": " DBAEUR03FT011.eop-EUR03.prod.protection.outlook.com",
+          "x-ms-exchange-processed-by-bccfoldering": "15.20.6002.010",
+          "x-ms-exchange-transport-endtoendlatency": "00:00:03.1887485",
+          "x-ms-office365-filtering-correlation-id": "bebfd07e-4370-444f-0e5d-08daf1af163c",
+          "x-ms-exchange-crosstenant-fromentityheader": "Internet",
+          "x-ms-exchange-crosstenant-network-message-id": "bebfd07e-4370-444f-0e5d-08daf1af163c",
+          "x-ms-exchange-crosstenant-originalarrivaltime": "08 Jan 2023 19:32:31.4546 (UTC)",
+          "x-ms-exchange-organization-expirationinterval": "1:00:00:00.0000000",
+          "x-ms-exchange-organization-network-message-id": " bebfd07e-4370-444f-0e5d-08daf1af163c",
+          "x-ms-exchange-organization-expirationstarttime": "08 Jan 2023 19:32:32.0951 (UTC)",
+          "x-ms-exchange-organization-messagedirectionality": "Incoming",
+          "x-ms-exchange-transport-crosstenantheadersstamped": "SN4PR10MB5558",
+          "x-ms-exchange-crosstenant-rms-persistedconsumerorg": " 00000000-0000-0000-0000-000000000000",
+          "x-ms-exchange-organization-expirationintervalreason": "OriginalSubmit",
+          "x-ms-exchange-organization-expirationstarttimereason": "OriginalSubmit"
+        },
+        "item_id": "AQMkADAwATM0MDAAMS01MjBjLTUyNWMtMDACLTAwCgBGAAADtlWpAwhwqEWZ688GapxwkwcAk06yHt5e1ka4GmsKkuXHKAAAAgEMAAAAk06yHt5e1ka4GmsKkuXHKAAAAAf+E0oAAAA=",
+        "epilogue": null,
+        "preamble": "",
+        "attachments": [],
+        "folder_path": "/root/Top of Information Store/Inbox",
+        "attachment_files": [],
+        "extract_attach_data": true,
+        "parsed_attachment_data": []
+      }
+    ],
+    "connector_mapping": {
+      "response": "{{data}}"
+    }
+  }
+]

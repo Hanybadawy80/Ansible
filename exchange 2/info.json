@@ -1,0 +1,2332 @@
+{
+  "name": "exchange",
+  "label": "Exchange",
+  "description": "The Exchange connector provides a robust, platform-independent, and simple interface for communicating with Microsoft Exchange 2007-2016 Server or Office 365 using Exchange Web Services (EWS).",
+  "publisher": "Fortinet",
+  "cs_approved": true,
+  "cs_compatible": true,
+  "version": "4.5.0",
+  "category": "Email Server",
+  "icon_small_name": "small.png",
+  "icon_large_name": "large.png",
+  "help_online": "",
+  "ingestion_supported": true,
+  "ingestion_modes": [
+    "notification",
+    "scheduled"
+  ],
+  "configuration": {
+    "fields": [
+      {
+        "title": "Exchange",
+        "name": "exchange",
+        "type": "select",
+        "description": "There are two types of MS Exchange solutions: hosted and cloud. Choose Office365 if you have the cloud services of Exchange or choose On-Premises/Outlook Live if you have the hosted services of Exchange.\nNote: Notification services will work on both cloud and on-premise solutions. If you choose On-Premises/Outlook Live, then you must specify the following parameters:\n\nProtocol:The protocol that will be used to communicate with the Exchange server/Office 365 server. Choose either http or https. By default, this is set to https.\nHost:Hostname of the Exchange server to which you will connect and perform the automated operations.\nImportant:Specify the host as outlook.office365.com if you are configuring the connector for an Outlook Live account.If 2FA is enabled for the Outlook Live account, use \"App Password\" in the configuration. For information on how to generate an \"App Password\", see https://support.microsoft.com/en-us/account-billing/using-app-passwords-with-apps-that-don-t-support-two-step-verification-5896ed9b-4263-e681-128a-a6f2979a7944\nUsername:Username to access the Exchange server/Office 365 server. For Exchange, add the username in the format: Domain\\Username.\nPassword:Password to access the Exchange server.\nEmail Address: Email address of your Exchange server.\nAccess Type: (Optional) Access type for the user. You can choose between Delegate or Impersonation. By default, this is set as Delegate. If you select Impersonation, then ensure that in the Email Address field, you specify the email address that has been granted Impersonation rights. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365? article.\n\nIf you choose Office365, then you must specify the following parameters:\n\nProtocol:The protocol that will be used to communicate with the Exchange server/Office 365 server. Choose either http or https. By default, this is set to https.\nHost:Hostname of the Exchange server to which you will connect and perform the automated operations.\nNote: For Office365 and outlook.live.com, add the host as outlook.office365.com.\nAuthentication Method: The method used for authentication, i.e., select OAUTH and specify the following parameters: \n\nAccess Type: Select the access type for the user. You can choose between \"On behalf of User - Delegated Permission\" or \"Without a User - Application Permission\". By default, this is set as \"Without a User - Application Permission\". \n\nThe 'Without a User - Application Permission' flow refers to a process in which there is no user sign-in; instead, the administrator provides consent on behalf of all user's inboxes in a given tenant. Azure applications require 'full_app' permissions for granting your admin's consent. The 'On behalf of User - Delegated Permission' flow refers to a process in which users access the mailbox using the signed-in users' consent. For more information on permissions and registering an app with Azure, see the Registering a new application using the Microsoft Azure Portal section.\nIf you choose 'On behalf of User - Delegated Permission', then you must specify the following parameters: \n\nTenant ID: ID of the tenant that you have been provided for your application in the Azure instance. The tenant ID can be 'common', 'organizations', 'consumers', or tenant identifiers.\nClient ID: Unique ID of the Azure application that is used to create an authentication token required to access the API. The client ID comes from registering the application with the Microsoft Azure portal. It is in the UUID format.\nClient Secret: Unique Client Secret of the Azure application that is used to create an authentication token required to access the API. Sometimes called an application password, the client secret is set from the 'Certificates & Secrets' section of the Microsoft Azure portal.\nEmail Address: Email address of your Exchange server.\nAuthorization Code:The authorization code that you acquired during the authorization step. For more information on how to get the Authentication code, see the Getting the Authorization Code section.\n\nIf you choose 'Without a User - Application Permission', then you must specify the following parameters: \n\nTenant ID: ID of the tenant that you have been provided for your application in the Azure instance. The tenant ID can be 'common', 'organizations', 'consumers', or tenant identifiers.\nClient ID: Unique ID of the Azure application that is used to create an authentication token required to access the API. The client ID comes from registering the application with the Microsoft Azure portal. It is in the UUID format.\nClient Secret: Unique Client Secret of the Azure application that is used to create an authentication token required to access the API. Sometimes called an application password, the client secret is set from the 'Certificates & Secrets' section of the Microsoft Azure portal.\nEmail Address: Email address of your Exchange server.",
+        "tooltip": "There are two types of MS Exchange solutions: hosted and cloud. Choose Office365 if you have the cloud services of Exchange or choose On-Premises if you have the hosted services of Exchange. If the user wants to configure the connector for an Outlook Live account, provide the host as \"outlook.office365.com\". Note: Notification services will work on both cloud and on-premise solutions.",
+        "required": true,
+        "editable": true,
+        "visible": true,
+        "options": [
+          "Office365",
+          "On-premises/Outlook Live"
+        ],
+        "onchange": {
+          "Office365": [
+            {
+              "title": "Protocol",
+              "description": "Protocol that will be used to communicate with the Exchange server or Office 365. By default, this is https.",
+              "tooltip": "Protocol that will be used to communicate with the Exchange server or Office 365. By default, this is https.",
+              "required": false,
+              "editable": true,
+              "visible": true,
+              "type": "select",
+              "name": "has_ssl",
+              "options": [
+                "https",
+                "http"
+              ],
+              "value": "https"
+            },
+            {
+              "title": "Host",
+              "name": "host",
+              "type": "text",
+              "description": "Hostname of the Exchange server Note: For Office365, this will be outlook.office365.com.",
+              "tooltip": "Hostname of the Exchange server Note: For Office365, this will be outlook.office365.com.",
+              "placeholder": "outlook.office365.com",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "value": "outlook.office365.com"
+            },
+            {
+              "title": "Authentication Method",
+              "name": "auth_method",
+              "type": "select",
+              "description": "The method used for authentication.",
+              "tooltip": "The method used for authentication.",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "options": [
+                "OAUTH"
+              ],
+              "onchange": {
+                "OAUTH": [
+                  {
+                    "title": "Access Type",
+                    "description": "Select the access type for the user. You can choose between \"On behalf of User - Delegated Permission\" or \"Without a User - Application Permission\". By default, this is set as \"Without a User - Application Permission\". \nThe 'Without a User - Application Permission' flow refers to a process in which there is no user sign-in; instead, the administrator provides consent on behalf of all user's inboxes in a given tenant. Azure applications require 'full_app' permissions for granting your admin's consent. The 'On behalf of User - Delegated Permission' flow refers to a process in which users access the mailbox using the signed-in users' consent.",
+                    "tooltip": "Select the access type for the user. You can choose between \"On behalf of User - Delegated Permission\" or \"Without a User - Application Permission\". By default, this is set as \"Without a User - Application Permission\". \nThe 'Without a User - Application Permission' flow refers to a process in which there is no user sign-in; instead, the administrator provides consent on behalf of all user's inboxes in a given tenant. Azure applications require 'full_app' permissions for granting your admin's consent. The 'On behalf of User - Delegated Permission' flow refers to a process in which users access the mailbox using the signed-in users' consent.",
+                    "required": true,
+                    "editable": true,
+                    "visible": true,
+                    "type": "select",
+                    "name": "access_type",
+                    "options": [
+                      "On behalf of User - Delegated Permission",
+                      "Without a User - Application Permission"
+                    ],
+                    "value": "Without a User - Application Permission",
+                    "onchange": {
+                      "Without a User - Application Permission": [
+                        {
+                          "title": "Tenant ID",
+                          "tooltip": "ID of the tenant that you have been provided for your application in the Azure instance.The tenant ID can be 'common', 'organizations', 'consumers', or tenant identifiers.",
+                          "description": "ID of the tenant that you have been provided for your application in the Azure instance.The tenant ID can be 'common', 'organizations', 'consumers', or tenant identifiers.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "text",
+                          "name": "tenant_id"
+                        },
+                        {
+                          "title": "Client ID",
+                          "tooltip": "Unique ID of the Azure application that is used to create an authentication token required to access the API. The client ID comes from registering the application with the Microsoft Azure portal. It is in the UUID format.",
+                          "description": "Unique ID of the Azure application that is used to create an authentication token required to access the API. The client ID comes from registering the application with the Microsoft Azure portal. It is in the UUID format.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "text",
+                          "name": "client_id"
+                        },
+                        {
+                          "title": "Client Secret",
+                          "description": "Unique Client Secret of the Azure application that is used to create an authentication token required to access the API. Sometimes called an application password, the client secret is set from the 'Certificates & Secrets' section of the Microsoft Azure portal.",
+                          "tooltip": "Unique Client Secret of the Azure application that is used to create an authentication token required to access the API. Sometimes called an application password, the client secret is set from the 'Certificates & Secrets' section of the Microsoft Azure portal.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "password",
+                          "name": "client_secret"
+                        },
+                        {
+                          "title": "Email Address",
+                          "description": "Email address of your Exchange server.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "email",
+                          "name": "email_address"
+                        }
+                      ],
+                      "On behalf of User - Delegated Permission": [
+                        {
+                          "title": "Tenant ID",
+                          "tooltip": "ID of the tenant that you have been provided for your application in the Azure instance.The tenant ID can be 'common', 'organizations', 'consumers', or tenant identifiers.",
+                          "description": "ID of the tenant that you have been provided for your application in the Azure instance.The tenant ID can be 'common', 'organizations', 'consumers', or tenant identifiers.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "text",
+                          "name": "tenant_id"
+                        },
+                        {
+                          "title": "Client ID",
+                          "tooltip": "Unique ID of the Azure application that is used to create an authentication token required to access the API. The client ID comes from registering the application with the Microsoft Azure portal. It is in the UUID format.",
+                          "description": "Unique ID of the Azure application that is used to create an authentication token required to access the API. The client ID comes from registering the application with the Microsoft Azure portal. It is in the UUID format.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "text",
+                          "name": "client_id"
+                        },
+                        {
+                          "title": "Client Secret",
+                          "description": "Unique Client Secret of the Azure application that is used to create an authentication token required to access the API. Sometimes called an application password, the client secret is set from the 'Certificates & Secrets' section of the Microsoft Azure portal.",
+                          "tooltip": "Unique Client Secret of the Azure application that is used to create an authentication token required to access the API. Sometimes called an application password, the client secret is set from the 'Certificates & Secrets' section of the Microsoft Azure portal.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "password",
+                          "name": "client_secret"
+                        },
+                        {
+                          "title": "Email Address",
+                          "description": "Email address of your Exchange server.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true,
+                          "type": "email",
+                          "name": "email_address"
+                        },
+                        {
+                          "title": "Authorization Code",
+                          "name": "code",
+                          "type": "password",
+                          "tooltip": "The authorization code that you acquired during the authorization step. For more information on how to get the Authentication code, see the Getting the Authorization Code section.",
+                          "description": "The authorization code that you acquired during the authorization step. For more information on how to get the Authentication code, see the Getting the Authorization Code section.",
+                          "required": true,
+                          "editable": true,
+                          "visible": true
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "value": "OAUTH"
+            }
+          ],
+          "On-premises/Outlook Live": [
+            {
+              "title": "Protocol",
+              "description": "Protocol that will be used to communicate with the Exchange server or Office 365. By default, this is https.",
+              "tooltip": "Protocol that will be used to communicate with the Exchange server or Office 365. By default, this is https.",
+              "required": false,
+              "editable": true,
+              "visible": true,
+              "type": "select",
+              "name": "has_ssl",
+              "options": [
+                "https",
+                "http"
+              ],
+              "value": "https"
+            },
+            {
+              "title": "Host",
+              "name": "host",
+              "type": "text",
+              "description": "Hostname of the Exchange server to which you will connect and perform the automated operations.",
+              "tooltip": "Hostname of the Exchange server to which you will connect and perform the automated operations.",
+              "required": true,
+              "editable": true,
+              "visible": true
+            },
+            {
+              "title": "Username",
+              "tooltip": "Username to access the Exchange server or Office365. For Exchange servers, add the Email Address or username in the format: Domain\\Username.",
+              "description": "Username to access the Exchange server or Office365. For Exchange servers, add the Email Address or username in the format: Domain\\Username.",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "text",
+              "name": "username"
+            },
+            {
+              "title": "Password",
+              "description": "Password to access the Exchange server or Office365.",
+              "tooltip": "Password to access the Exchange server or Office365.",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "password",
+              "name": "password"
+            },
+            {
+              "title": "Email Address",
+              "description": "Email address of your Exchange server.",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "email",
+              "name": "email_address"
+            },
+            {
+              "title": "Access Type",
+              "description": "(Optional) Access type for the user. You can choose between Delegate or Impersonation. By default, this is set as Delegate. If you select Impersonation, then ensure that in the Email Address field, you specify the email address that has been granted Impersonation rights. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+              "tooltip": "Access type for the user. You can choose between Delegate or Impersonation. By default, this is set as Delegate. If you select Impersonation, then ensure that in the Email Address field, you specify the email address that has been granted Impersonation rights. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+              "required": false,
+              "editable": true,
+              "visible": true,
+              "type": "select",
+              "name": "access_type",
+              "options": [
+                "DELEGATE",
+                "IMPERSONATION"
+              ],
+              "value": "DELEGATE"
+            }
+          ]
+        },
+        "value": "Office365"
+      },
+      {
+        "title": "Use Autodiscover",
+        "description": "An alias account will work for the given account details. Defaults to False.",
+        "tooltip": "An alias account will work for the given account details. Defaults to unchecked.",
+        "required": false,
+        "editable": true,
+        "visible": true,
+        "type": "checkbox",
+        "name": "use_autodiscover"
+      },
+      {
+        "title": "Access Token",
+        "type": "password",
+        "name": "access_token",
+        "description": "Access token for accessing the Exchange Web Services (EWS).",
+        "tooltip": "Access token for accessing the Exchange Web Services (EWS).",
+        "required": false,
+        "editable": false,
+        "visible": false
+      },
+      {
+        "title": "Verify SSL",
+        "description": "Specifies whether the SSL certificate for the server is to be verified or not. Defaults to True.",
+        "tooltip": "Specifies whether the SSL certificate for the server is to be verified or not. Defaults to True.",
+        "required": false,
+        "editable": true,
+        "visible": true,
+        "type": "checkbox",
+        "name": "verify_ssl",
+        "value": true
+      },
+      {
+        "title": "Enable Email Notification Service",
+        "name": "notification_service",
+        "type": "checkbox",
+        "description": "Select this option, i.e., set it to True (default) to set up a listener that would instantly notify FortiSOAR whenever a new email arrives in the mailbox. Once you select this option, the following parameters get populated: \n\nFolder Path to Monitor: The path of the mailbox that you want the listener to monitor. By default, this is set to the user's 'Inbox'; however, it can be changed to any folder by entering the path of that folder in this field. For example, to monitor a 'Phishing' mailbox that is present within 'Inbox', you can enter Inbox/Phishing in this field. From version 4.1.0 onwards, you can configure multiple folders that you want the listener to monitor in the same mailbox, by providing appropriate values i.e., the path(s) of the folder within the same mailbox that you want the listener to monitor in the \"Folder Path to Monitor\" field. For example, to monitor the Inbox mailbox and the Phishing and Analysis mailboxes within the Inbox mailboxspecifyInbox, Inbox/Phishing, Inbox/Analysis in the\"Folder Path to Monitor\" field.\nImportant: The name that you provide for the mailbox that you want to monitor must be unique. The listener will work only when the folder name is unique.\nNote: If you have configured the listener for a custom folder and not the 'Inbox', then you must update the source and source_folder variables in the Set Variable step of the \"> Exchange > Fetch\" playbook from 'Inbox' to the custom folder. You require to enter the \"Custom Folder\" string in the source field and the name of the folder in the source_folder field. For example, if you want to monitor the \"Inbox/Phishing\" mailbox, then you need to enter Inbox/Phishing in the source_folder field. This is required for retrieving unread emails from the custom folder. An example screenshot follows:\n\nListener Port:Port on which you want to start the listener.\nNote: This port is used for communication between FortiSOAR and the Exchange notification service process. 10011 is the default port number. You can specify any unused port number if the default port is unavailable. You can also use a similar port number for multiple Exchange connector configurations as the Exchange notification service process is capable of communicating with multiple Exchange servers.\nPlaybook Trigger: The API endpoint used to trigger the playbook\nNote: The playbook authentication method should be set as HMAC.\n\nImportant: For more information on performing dataingestion for Exchange on an agent or using the listener-based ingestionon an agent, see theData Ingestion Support section.",
+        "tooltip": "It will set up a listener that would instantly notify FortiSOAR when a new email arrives in the mailbox.",
+        "visible": true,
+        "required": false,
+        "editable": true,
+        "onchange": {
+          "true": [
+            {
+              "title": "Folder Path to Monitor",
+              "description": "The mailbox for the listener to monitor. This defaults to the user's Inbox, but can be changed to any folder by entering the path to that folder. To monitor a mailbox called 'Phishing' inside of the inbox, you could enter 'Inbox/Phishing', for example",
+              "tooltip": "The mailbox for the listener to monitor. This defaults to the user's Inbox, but can be changed to any folder by entering the path to that folder. To monitor a mailbox called 'Phishing' inside of the inbox, you could enter 'Inbox/Phishing', for example",
+              "name": "mailbox",
+              "type": "text",
+              "visible": true,
+              "editable": true,
+              "required": false,
+              "value": "Inbox"
+            },
+            {
+              "title": "Listener Port",
+              "description": "This port will be used by FortiSOAR and the Exchange notification service. The default port number is 10011. Use an unused port number if the default port is not available. Note: You can use notification service processes for multiple Exchange connector configurations to trigger playbooks for multiple mailboxes.",
+              "tooltip": "This port will be used by FortiSOAR and the Exchange notification service. The default port number is 10011. Use an unused port number if the default port is not available. Note: You can use notification service processes for multiple Exchange connector configurations to trigger playbooks for multiple mailboxes.",
+              "name": "port",
+              "type": "integer",
+              "visible": true,
+              "editable": true,
+              "required": false,
+              "value": 10011
+            },
+            {
+              "title": "Playbook Trigger",
+              "description": "Displays the API endpoint used to trigger the playbook. Note: The playbook authentication method should be set as HMAC.",
+              "tooltip": "Displays the API endpoint used to trigger the playbook. Note: The playbook authentication method should be set as HMAC.",
+              "name": "trigger",
+              "type": "text",
+              "visible": true,
+              "editable": true,
+              "required": false,
+              "value": "fetch_emails_exchange"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "operations": [
+    {
+      "operation": "get_email_new",
+      "title": "Get Unread Emails",
+      "description": "Gets all unread emails from your Exchange account. You can also mark the retrieved Unread emails as Read.",
+      "category": "investigation",
+      "annotation": "get_email_new",
+      "output_schema": [
+        {
+          "epilogue": "",
+          "attachment_files": [],
+          "body": {
+            "html": "",
+            "text": "",
+            "json": "",
+            "inline_images": [
+              {
+                "file": "",
+                "metadata": {
+                  "md5": "",
+                  "sha1": "",
+                  "sha256": "",
+                  "filename": "",
+                  "content_type": "",
+                  "content_length": ""
+                }
+              }
+            ]
+          },
+          "preamble": "",
+          "headers": {
+            "x-received": "",
+            "mime-version": "",
+            "message-id": "",
+            "x-exchange-antispam-report-test": "",
+            "x-exchange-antispam-report-cfa-test": "",
+            "x-ms-office365-filtering-correlation-id": "",
+            "x-ms-exchange-crosstenant-network-message-id": "",
+            "x-microsoft-exchange-diagnostics": [],
+            "x-ms-exchange-crosstenant-id": "",
+            "x-ms-exchange-crosstenant-fromentityheader": "",
+            "spamdiagnosticmetadata": "",
+            "x-gm-message-state": "",
+            "spamdiagnosticoutput": "",
+            "to": "",
+            "x-microsoft-antispam": "",
+            "subject": "",
+            "from": "",
+            "received": [],
+            "x-ms-exchange-crosstenant-originalarrivaltime": "",
+            "x-microsoft-antispam-message-info": [],
+            "authentication-results": "",
+            "x-ms-publictraffictype": "",
+            "received-spf": "",
+            "x-ms-traffictypediagnostic": "",
+            "x-ms-exchange-transport-crosstenantheadersstamped": "",
+            "sender": "",
+            "x-ms-exchange-organization-authsource": "",
+            "x-ms-exchange-organization-messagedirectionality": "",
+            "x-ms-exchange-organization-scl": "",
+            "auto-submitted": "",
+            "x-forefront-antispam-report": "",
+            "x-eoptenantattributedmessage": "",
+            "dkim-signature": [],
+            "x-google-smtp-source": "",
+            "reply-to": "",
+            "x-ms-exchange-processed-by-bccfoldering": "",
+            "x-google-dkim-signature": "",
+            "x-ms-exchange-organization-authas": "",
+            "content-type": "",
+            "x-ms-exchange-organization-network-message-id": "",
+            "return-path": "",
+            "x-eopattributedmessage": "",
+            "x-ms-exchange-transport-endtoendlatency": ""
+          },
+          "item_id": "",
+          "attachments": [
+            {
+              "file": "",
+              "metadata": {
+                "sha256": "",
+                "content_length": "",
+                "content_type": "",
+                "sha1": "",
+                "filename": "",
+                "md5": ""
+              },
+              "json": "",
+              "text": ""
+            }
+          ],
+          "email_as_attachment": {
+            "id": "",
+            "@id": "",
+            "cVEs": [],
+            "file": {
+              "id": "",
+              "@id": "",
+              "size": "",
+              "uuid": "",
+              "@type": "",
+              "assignee": "",
+              "filename": "",
+              "metadata": [],
+              "mimeType": "",
+              "thumbnail": "",
+              "uploadDate": ""
+            },
+            "name": "",
+            "type": "",
+            "uuid": "",
+            "@type": "",
+            "tasks": [],
+            "alerts": [],
+            "assets": [],
+            "owners": [],
+            "people": [],
+            "@context": "",
+            "assignee": "",
+            "comments": [],
+            "warrooms": [],
+            "incidents": [],
+            "createDate": "",
+            "createUser": {
+              "id": "",
+              "@id": "",
+              "name": "",
+              "uuid": "",
+              "@type": "",
+              "avatar": "",
+              "userId": "",
+              "userType": "",
+              "createDate": "",
+              "createUser": "",
+              "modifyDate": "",
+              "modifyUser": ""
+            },
+            "indicators": [],
+            "modifyDate": "",
+            "modifyUser": {
+              "id": "",
+              "@id": "",
+              "name": "",
+              "uuid": "",
+              "@type": "",
+              "avatar": "",
+              "userId": "",
+              "userType": "",
+              "createDate": "",
+              "createUser": "",
+              "modifyDate": "",
+              "modifyUser": ""
+            },
+            "recordTags": [],
+            "userOwners": [],
+            "workspaces": [],
+            "description": "",
+            "vulnerabilities": []
+          },
+          "folder_path": "",
+          "parsed_attachment_data": []
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Source",
+          "name": "source",
+          "type": "select",
+          "tooltip": "Retrieve the unread emails for selected folder from the Exchange server. If you select All, then it retrieve all unread emails from all available folder on the Exchange mailbox. By default, this is set as Inbox",
+          "description": "Select the source folder from which you want to retrieve unread emails from your Exchange account. You can choose from All, Inbox, Sent, Drafts, Trash, or Custom Folder. By default, this is set as Inbox. If you select All, then this operation will search for emails across all folders associated with your Exchange account. If you select Custom Folder, then you must specify the folder in your Exchange account from which you want to retrieve unread emails.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "All",
+            "Inbox",
+            "Sent",
+            "Drafts",
+            "Trash",
+            "Custom Folder"
+          ],
+          "value": "Inbox",
+          "onchange": {
+            "Custom Folder": [
+              {
+                "title": "Folder Name",
+                "tooltip": "Retrieve the unread emails from specified source folder from Exchange mailbox",
+                "description": "Select this option, retrieve the unread emails from the Exchange mailbox based on specified source folder",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "source_folder",
+                "value": ""
+              }
+            ]
+          }
+        },
+        {
+          "title": "Mark as Read",
+          "tooltip": "Retrieve the unread emails from the Exchange mailbox and marks these emails as Read",
+          "description": "Select this option, i.e., set it to True (default), to retrieve the unread emails from the Exchange account and also mark these emails as Read. By default, this is set to True.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "mark_read",
+          "value": true
+        },
+        {
+          "title": "Pull Oldest First",
+          "name": "pull_oldest",
+          "type": "checkbox",
+          "tooltip": "Select this option, i.e., set it to True to retrieve the oldest unread email first from the Exchange account, i.e., if this operation is checked, then the unread emails get sorted by datetime from oldest to newest. By default, this is unchecked, i.e., it is set as False.",
+          "description": "Select this option, i.e., set it to True, to retrieve the oldest unread email first from the Exchange account, i.e., if this operation is checked, then the unread emails get sorted by DateTime from oldest to newest. By default, this is unchecked, i.e., it is set as False.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "value": false
+        },
+        {
+          "title": "Limit",
+          "tooltip": "Maximum number of emails that you want to display in the output based on your search criteria. If you do not specify the range, then all the emails based on your search criteria are displayed.",
+          "description": "(Optional) The maximum number of emails, based on your filter criterion, you want to include in the output of this operation. If you do not specify anything in this field then all emails based on your filter criterion will be included in the output of this operation.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "integer",
+          "name": "limit"
+        },
+        {
+          "title": "Parse Inline Images",
+          "name": "parse_inline",
+          "type": "checkbox",
+          "tooltip": "Select this option, i.e., set it to True, to retrieve the body of the unread emails including inline images, from the Exchange account. By default, this is set to False (option is unchecked).",
+          "description": "Select this option, i.e., set it to True, to retrieve the body of the unread emails including inline images, from the Exchange account. By default, this is set to False (the option is unchecked).",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "value": ""
+        },
+        {
+          "title": "Save Email",
+          "tooltip": "Save the email as a file in the FortiSOAR Attachment module.",
+          "description": "Select this option, i.e., set it to True(default) to save the email as a file in the Attachments module.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "save_as_attachment",
+          "value": false
+        },
+        {
+          "title": "Extract Attachment Data",
+          "tooltip": "Select this option, i.e., set it to True (default) to also extract the attachment data for the unread emails, if the type of the attachment is eml or msg.",
+          "description": "Select this option, i.e., set it to True (default) to also extract the attachment data for the unread emails, if the type of the attachment is eml or msg.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "extract_attach_data",
+          "value": true
+        },
+        {
+          "title": "Exclude Absolute Path in Output",
+          "description": "Select this checkbox if you want to exclude the absolute path from this operation's output. This helps to improve the performance of connector operations, especially in the case of large mailboxes. By default, this checkbox is unchecked.",
+          "tooltip": "When the absolute path is excluded, this may improve performance if the mailbox size is large. Defaults to unchecked.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "value": false,
+          "name": "exclude_absolute_path"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "send_email",
+      "annotation": "send_email",
+      "title": "Send Email",
+      "description": "Sends an email from your Exchange account based on the email body, recipients' email addresses, and other input parameters you have specified.",
+      "parameters": [
+        {
+          "title": "Subject",
+          "tooltip": "(Optional) Subject of the email message that you want to send from the Exchange account.",
+          "description": "(Optional) The subject of the email message that you want to send from the Exchange account.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "subject"
+        },
+        {
+          "title": "To Recipients",
+          "description": "Email IDs of the members to whom you want to send the email message from the Exchange account. You must add the email IDs in the CSV or list format. For example, abc@xyz.com, def@lmn.comImportant: You must specify email ID(s) in at least one of the following fields: TO Recipients, CC Recipients, or BCC Recipients.",
+          "tooltip": "Email IDs of the members to whom you want to send the email message from the Exchange account. You must add the email IDs in the CSV or list format. For example, abc@xyz.com, def@lmn.comImportant: You must specify email ID(s) in at least one of the following fields: TO Recipients, CC Recipients, or BCC Recipients.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "to_recipients"
+        },
+        {
+          "title": "Cc Recipients",
+          "tooltip": "Email IDs of the members to be added to the CC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "description": "Email IDs of the members to be added to the CC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "cc_recipients"
+        },
+        {
+          "title": "Bcc Recipients",
+          "tooltip": "Email IDs of the members to be added to the BCC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "description": "Email IDs of the members to be added to the BCC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "bcc_recipients"
+        },
+        {
+          "title": "Body",
+          "tooltip": "(Optional) Message or content of the email that you want to send from the Exchange account.",
+          "description": "(Optional) Message or content of the email that you want to send from the Exchange account.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "richtext",
+          "renderer_type": "html",
+          "name": "body"
+        },
+        {
+          "title": "Attachment IRIs",
+          "tooltip": "(Optional) List of IRI ID(s) of the file (s) that you want to attach to the email that you want to send from the Exchange server. IRI IDs are used to access files from the FortiSOAR Attachments module. You must add the Attachment IRIs in the CSV or list format.",
+          "description": "(Optional) List of IRI ID(s) of the file (s) that you want to attach to the email that you want to send from the Exchange server. IRI IDs are used to access files from the Attachments module. You must add the Attachment IRIs in the CSV or list format.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "iri_list"
+        },
+        {
+          "title": "Inline Attachment IRIs",
+          "tooltip": "(Optional) List of IRI ID(s) of the file (s) that you want to add inline to the email that you want to send from the Exchange server. You can add the image content inline in the email body using its UUIDs. For example, <img src=\"uuid_for_inline_images\">",
+          "description": "(Optional) List of IRI ID(s) of the file (s) that you want to add inline to the email that you want to send from the Exchange server. You can add the image content inline in the email body using its UUIDs. For example, <img src=\"uuid_for_inline_images\">",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "inline_iri_list"
+        }
+      ],
+      "output_schema": {
+        "message": ""
+      },
+      "enabled": true
+    },
+    {
+      "operation": "send_email_new",
+      "annotation": "send_email_new",
+      "title": "Send Email (Advanced)",
+      "description": "Sends an email from your Exchange account based on the email body type, recipients' email addresses, and other input parameters you have specified.",
+      "parameters": [
+        {
+          "title": "To Recipients",
+          "description": "Email IDs of the members to whom you want to send the email message from the Exchange account. You must add the email IDs in the CSV or list format. For example, abc@xyz.com, def@lmn.comImportant: You must specify email ID(s) in at least one of the following fields: TO Recipients, CC Recipients, or BCC Recipients.",
+          "tooltip": "Email IDs of the members to whom you want to send the email message from the Exchange account. You must add the email IDs in the CSV or list format. For example, abc@xyz.com, def@lmn.comImportant: You must specify email ID(s) in at least one of the following fields: TO Recipients, CC Recipients, or BCC Recipients.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "to_recipients"
+        },
+        {
+          "title": "Cc Recipients",
+          "tooltip": "Email IDs of the members to be added to the CC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "description": "Email IDs of the members to be added to the CC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "cc_recipients"
+        },
+        {
+          "title": "Bcc Recipients",
+          "tooltip": "Email IDs of the members to be added to the BCC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "description": "Email IDs of the members to be added to the BCC list of the email message that you want to send from the Exchange account. You must add the email IDs in the CSV or list format.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "bcc_recipients"
+        },
+        {
+          "title": "Body Type",
+          "name": "body_type",
+          "value": "Plain Text",
+          "type": "select",
+          "options": [
+            "Rich Text",
+            "Email Template"
+          ],
+          "visible": true,
+          "editable": true,
+          "required": true,
+          "description": "Select the format in which you want to send the email. You can choose from the following options: Plain Text, Rich Text, or Email Template.\nIf you choose Plain Text, then in the Content field, you can specify only plain text.\nIf you choose Rich Text, then in the Content field, you can add formatted content, images, and even custom jinja expressions using Dynamic Values.\nIf you choose Email Template, then the Email Template drop-down list is displayed, using which you can select the template that you want to use to send the email. An existing email template is passed as an input for the email subject and body (content) allowing you to leverage an existing email template and build upon it, thereby, avoiding re-work and ensuring consistency.",
+          "tooltip": "You can choose to send emails in plain text, rich text, or email template format",
+          "onchange": {
+            "Rich Text": [
+              {
+                "title": "Subject",
+                "tooltip": "(Optional) Subject of the email message that you want to send from the Exchange account.",
+                "description": "(Optional) The subject of the email message that you want to send from the Exchange account.",
+                "required": false,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "subject"
+              },
+              {
+                "title": "Body",
+                "tooltip": "(Optional) Message or content of the email that you want to send from the Exchange account.",
+                "description": "(Optional) Message or content of the email that you want to send from the Exchange account.",
+                "required": false,
+                "editable": true,
+                "visible": true,
+                "type": "richtext",
+                "renderer_type": "html",
+                "name": "body"
+              }
+            ],
+            "Email Template": [
+              {
+                "title": "Email Template",
+                "name": "email_templates",
+                "type": "select",
+                "apiOperation": "get_email_templates",
+                "visible": true,
+                "editable": true,
+                "required": true
+              }
+            ]
+          }
+        },
+        {
+          "title": "Attachment IRIs",
+          "tooltip": "(Optional) List of IRI ID(s) of the file (s) that you want to attach to the email that you want to send from the Exchange server. IRI IDs are used to access files from the FortiSOAR Attachments module. You must add the Attachment IRIs in the CSV or list format.",
+          "description": "(Optional) List of IRI ID(s) of the file (s) that you want to attach to the email that you want to send from the Exchange server. IRI IDs are used to access files from the Attachments module. You must add the Attachment IRIs in the CSV or list format.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "iri_list"
+        },
+        {
+          "title": "Inline Attachment IRIs",
+          "tooltip": "(Optional) List of IRI ID(s) of the file (s) that you want to add inline to the email that you want to send from the Exchange server. You can add the image content inline in the email body using its UUIDs. For example, <img src=\"uuid_for_inline_images\">",
+          "description": "(Optional) List of IRI ID(s) of the file (s) that you want to add inline to the email that you want to send from the Exchange server. You can add the image content inline in the email body using its UUIDs. For example, <img src=\"uuid_for_inline_images\">",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "inline_iri_list"
+        }
+      ],
+      "output_schema": {
+        "message": ""
+      },
+      "enabled": true
+    },
+    {
+      "operation": "send_reply",
+      "title": "Send Reply",
+      "category": "investigation",
+      "description": "Sends a reply to an email based on the message ID to which you want to send a reply, the content of the reply, and other input parameters you have specified.\nNote: To send a reply to an email using the message ID of the parent mail, use the message ID of the most recently received mail or the most recently sent reply.",
+      "parameters": [
+        {
+          "title": "Message ID",
+          "tooltip": "Provide the Message ID of the parent mail, to send the reply to.",
+          "description": "The ID of the email to which you want to send a reply.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        },
+        {
+          "title": "Body",
+          "tooltip": "Message or content of the email that you want to send as a reply to the email from the Exchange account.",
+          "description": "Message or content of the email that you want to send as a reply to the specified email from the Exchange account.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "richtext",
+          "renderer_type": "html",
+          "name": "body"
+        },
+        {
+          "title": "Subject",
+          "tooltip": "(Optional) Subject of the email message that you want to send from the Exchange account.",
+          "description": "(Optional) The subject of the email message that you want to send as a reply to the specified email from the Exchange account.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "subject"
+        },
+        {
+          "title": "To Recipients",
+          "description": "(Optional)Email IDs of the members to whom you want to send the reply email message from the Exchange account. These email IDs are in addition to the email address of the original sender of the email. You must add the email IDs in the CSV or list format.",
+          "tooltip": "Email IDs of the members to whom you want to send reply apart form the original sender, from the Exchange account. You must add the email IDs in the CSV or list format. For example, abc@xyz.com, def@lmn.com ",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "to_recipients"
+        },
+        {
+          "title": "Reply all",
+          "tooltip": "Check this checkbox to reply all, by default it is unchecked which means it will send reply to only the particular recipient",
+          "description": "Select this checkbox to send the reply to the sender of the previous message and everyone who received the original email.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "reply_all",
+          "value": false
+        }
+      ],
+      "output_schema": {
+        "message": ""
+      },
+      "enabled": true
+    },
+    {
+      "operation": "mark_as_read",
+      "title": "Mark Email as Read",
+      "description": "Marks an unread email as read in your Exchange account, based on the message ID you have specified.",
+      "category": "investigation",
+      "annotation": "mark_as_read",
+      "parameters": [
+        {
+          "title": "Message ID",
+          "tooltip": "ID of message to mark it as read",
+          "description": "The ID of the email that you want to mark as read.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        },
+        {
+          "title": "Folder Name",
+          "tooltip": "Name of the folder name that contains the email message that you want to mark as read. By default, this is search all folder across mailbox",
+          "description": "(Optional) Name of the folder name that contains the email message that you want to mark as read.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "folder_name"
+        }
+      ],
+      "output_schema": {
+        "message": ""
+      },
+      "enabled": true
+    },
+    {
+      "operation": "run_query",
+      "title": "Search Email",
+      "description": "Runs a query in your Exchange account and searches emails, based on input parameters, such as folder name, email address, query, and other input parameters you have specified.",
+      "category": "investigation",
+      "annotation": "search_email",
+      "output_schema": {
+        "emails": [
+          {
+            "epilogue": "",
+            "attachment_files": [],
+            "body": {
+              "html": "",
+              "text": "",
+              "json": "",
+              "inline_images": [
+              {
+                "file": "",
+                "metadata": {
+                  "md5": "",
+                  "sha1": "",
+                  "sha256": "",
+                  "filename": "",
+                  "content_type": "",
+                  "content_length": ""
+                }
+              }
+            ]
+            },
+            "preamble": "",
+            "headers": {
+              "X-Received": "",
+              "MIME-Version": "",
+              "Message-ID": "",
+              "X-Exchange-Antispam-Report-Test": "",
+              "X-Exchange-Antispam-Report-CFA-Test": "",
+              "X-MS-Office365-Filtering-Correlation-Id": "",
+              "X-MS-Exchange-CrossTenant-Network-Message-Id": "",
+              "X-Microsoft-Exchange-Diagnostics": [],
+              "X-MS-Exchange-CrossTenant-Id": "",
+              "X-MS-Exchange-CrossTenant-FromEntityHeader": "",
+              "SpamDiagnosticMetadata": "",
+              "X-Gm-Message-State": "",
+              "SpamDiagnosticOutput": "",
+              "To": "",
+              "X-Microsoft-Antispam": "",
+              "Subject": "",
+              "From": "",
+              "Received": [],
+              "X-MS-Exchange-CrossTenant-OriginalArrivalTime": "",
+              "X-Microsoft-Antispam-Message-Info": [],
+              "Authentication-Results": "",
+              "X-MS-PublicTrafficType": "",
+              "Received-SPF": "",
+              "X-MS-TrafficTypeDiagnostic": "",
+              "X-MS-Exchange-Transport-CrossTenantHeadersStamped": "",
+              "Sender": "",
+              "X-MS-Exchange-Organization-AuthSource": "",
+              "X-MS-Exchange-Organization-MessageDirectionality": "",
+              "X-MS-Exchange-Organization-SCL": "",
+              "Auto-Submitted": "",
+              "X-Forefront-Antispam-Report": "",
+              "X-EOPTenantAttributedMessage": "",
+              "DKIM-Signature": [],
+              "X-Google-Smtp-Source": "",
+              "Reply-To": "",
+              "X-MS-Exchange-Processed-By-BccFoldering": "",
+              "X-Google-DKIM-Signature": "",
+              "X-MS-Exchange-Organization-AuthAs": "",
+              "Content-Type": "",
+              "X-MS-Exchange-Organization-Network-Message-Id": "",
+              "Return-Path": "",
+              "X-EOPAttributedMessage": "",
+              "X-MS-Exchange-Transport-EndToEndLatency": ""
+            },
+            "file": "",
+            "item_id": "",
+            "attachments": [
+              {
+                "file": "",
+                "metadata": {
+                  "sha256": "",
+                  "content_length": "",
+                  "content_type": "",
+                  "sha1": "",
+                  "filename": "",
+                  "md5": ""
+                },
+                "json": "",
+                "text": ""
+              }
+            ],
+             "email_as_attachment": {
+            "id": "",
+            "@id": "",
+            "cVEs": [],
+            "file": {
+              "id": "",
+              "@id": "",
+              "size": "",
+              "uuid": "",
+              "@type": "",
+              "assignee": "",
+              "filename": "",
+              "metadata": [],
+              "mimeType": "",
+              "thumbnail": "",
+              "uploadDate": ""
+            },
+            "name": "",
+            "type": "",
+            "uuid": "",
+            "@type": "",
+            "tasks": [],
+            "alerts": [],
+            "assets": [],
+            "owners": [],
+            "people": [],
+            "@context": "",
+            "assignee": "",
+            "comments": [],
+            "warrooms": [],
+            "incidents": [],
+            "createDate": "",
+            "createUser": {
+              "id": "",
+              "@id": "",
+              "name": "",
+              "uuid": "",
+              "@type": "",
+              "avatar": "",
+              "userId": "",
+              "userType": "",
+              "createDate": "",
+              "createUser": "",
+              "modifyDate": "",
+              "modifyUser": ""
+            },
+            "indicators": [],
+            "modifyDate": "",
+            "modifyUser": {
+              "id": "",
+              "@id": "",
+              "name": "",
+              "uuid": "",
+              "@type": "",
+              "avatar": "",
+              "userId": "",
+              "userType": "",
+              "createDate": "",
+              "createUser": "",
+              "modifyDate": "",
+              "modifyUser": ""
+            },
+            "recordTags": [],
+            "userOwners": [],
+            "workspaces": [],
+            "description": "",
+            "vulnerabilities": []
+          },
+            "folder_path": "",
+            "parsed_attachment_data": []
+          }
+        ],
+        "search_fields": ""
+      },
+      "parameters": [
+        {
+          "title": "Target Email Address",
+          "description": "(Optional) Email address in which you want to search for emails.\nImportant: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365? article.",
+          "tooltip": "Email address in which you want to search for emails.Important: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "target_email"
+        },
+        {
+          "title": "Folder Name",
+          "description": "Folder in the Exchange account based on which you want to search for emails.\nNote: If you enter All in this field, then this operation will search for emails across all folders associated with your Exchange account.",
+          "tooltip": "Folder in the Exchange account based on which you want to search for emails. Note: If you enter All in this field, then this operation will search for emails across all folders associated with your Exchange account.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "folder"
+        },
+        {
+          "title": "Query Type",
+          "description": "Select the type of query that you want to use to search for emails on your Exchange account. You can choose between Basic or Advanced.\nIf you choose Basic, then you can specify the following parameters:\n\nSubject: The subject of the email message based on which you want to search emails on your Exchange account.\nBody:Content within the body of the email based on which you want to search emails on the Exchange account.\nSender:Email address of the sender based on which you want to search emails on the Exchange account.\nQuery:Search parameters based on which you want to search emails on the Exchange server in the form of a query. Accepts input in the dictionary format. For example, {'subject__icontains' : '365', 'datetime_received__gt' : '2018-01-20T18:30:00.000Z'} You can also provide options such as:\nsubject__exact='foo' // Returns items where the subject is 'foo'. Same as the filter(subject='foo'),\nsubject__iexact='foo' // Returns items where subject is 'foo', 'FOO' or 'Foo',\nsubject_contains='foo' //Returns items where the subject contains 'foo',\nsubject_icontains, subject_startswith, and subject_istartswith.\n\nIf you choose Advanced, then in the Query field, specify the querybased on which you want to search emails on the Exchange server. Some examples:\n\nQ(subject__iexact='foo') | Q(subject__contains='bar')) & ~Q(datetime_received__gt='2022-12-30T12:30:50Z')\n((Q(sender__icontains ='domain1') | Q(sender__icontains='domain2') | Q(sender__icontains='domain3')) | Q(subject_icontains='request')) & Q(datetime_created__gt='2021-12-12')\nQ(is_read=False) & Q(has_attachments=True) & Q(subject__startswith='TEST')\nQ(is_read=False) & Q(has_attachments=True) & ~Q(subject__startswith='View')\n((Q(display_to__istartswith='qa@') | Q(display_to__istartswith='snikam@')) & Q(datetime_sent__gte='2023-06-22T00:00:00Z')) & ~Q(body__icontains='csadmin mail test')\n\nNOTE:You can specify the date in YYYY-MM-DD, YYYY-MM-DD HH:mm:ss, or YYYY-MM-DDTHH:mm:ssZ formats.",
+          "tooltip": "Specify the type of search query which you want to use to search emails. Note: Advanced query should be in the form of Q object that are modeled after Django Q objects.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "select",
+          "name": "query_method",
+          "value": "Basic",
+          "options": [
+            "Basic",
+            "Advanced"
+          ],
+          "onchange": {
+            "Basic": [
+              {
+                "title": "Subject",
+                "tooltip": "Subject of the email message based on which you want to search emails on your Exchange account.",
+                "description": "Subject of the email message based on which you want to search emails on your Exchange account.",
+                "required": false,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "subject_text"
+              },
+              {
+                "title": "Body",
+                "tooltip": "Content within the body of the email based on which you want to search emails on the Exchange account.",
+                "description": "Content within the body of the email based on which you want to search emails on the Exchange account.",
+                "required": false,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "body_text"
+              },
+              {
+                "title": "Sender",
+                "description": "Email address of the sender based on which you want to search emails on the Exchange account.",
+                "tooltip": "Email address of the sender based on which you want to search emails on the Exchange account.",
+                "required": false,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "sender_text"
+              },
+              {
+                "title": "Query",
+                "description": "Search parameters based on which you want to search emails on the Exchange server in the form of a query. Accepts input in the dictionary format.For example, {'subject__icontains' : '365', 'datetime_received__gt' : '2018-01-20T18:30:00.000Z'}You can also provide options such as:subject__exact='foo' // Returns items where subject is 'foo'. Same as filter(subject='foo'), subject__iexact='foo' // Returns items where subject is 'foo', 'FOO' or 'Foo', subject_contains='foo' //Returns items where subject contains 'foo', subject_icontains, subject_startswith, and subject_istartswith.",
+                "tooltip": "Search parameters based on which you want to search emails on the Exchange server in the form of a query. Accepts input in the dictionary format. You can also provide options such as:subject__exact='foo' which is same as subject='foo'. , subject__iexact='foo', subject__iexact='foo', subject_icontains='foo', subject_startswith='foo', and subject_istartswith='foo'.",
+                "value": {
+                  "is_read": false,
+                  "subject__icontains": "365",
+                  "datetime_received__gt": "2018-01-20T18:30:00.000Z"
+                },
+                "required": false,
+                "editable": true,
+                "visible": true,
+                "type": "json",
+                "name": "query"
+              }
+            ],
+            "Advanced": [
+              {
+                "title": "Query",
+                "name": "advanced_query",
+                "type": "text",
+                "description": "Specify query in Q objects format. For example (Q(subject__iexact='foo') | Q(subject__contains='bar')) & ~Q(datetime_received__gt='2022-12-30T12:30:50Z'). Note: You can specify date in YYYY-MM-DD, YYYY-MM-DD HH:mm:ss or YYYY-MM-DDTHH:mm:ssZ format.",
+                "tooltip": "Specify query in Q objects format. Note: You can specify date in YYYY-MM-DD, YYYY-MM-DD HH:mm:ss or YYYY-MM-DDTHH:mm:ssZ format.",
+                "placeholder": "e.g. (Q(subject__iexact='foo') | Q(subject__contains='bar')) & ~Q(datetime_received__gt='2022-12-30T12:30:60Z').",
+                "required": false,
+                "editable": true,
+                "visible": true
+              }
+            ]
+          }
+        },
+        {
+          "title": "Pull Oldest First",
+          "name": "pull_oldest",
+          "type": "checkbox",
+          "tooltip": "Select this option, i.e., set it to True to pull the oldest email first from the Exchange account, i.e., if this operation is checked, then the emails get sorted by datetime from oldest to newest. By default, this is unchecked, i.e., it is set as False.",
+          "description": "Select this option, i.e., set it to True to pull the oldest email first from the Exchange account, i.e., if this operation is checked, then the emails get sorted by DateTime from oldest to newest. By default, this is unchecked, i.e., it is set as False.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "value": false
+        },
+        {
+          "title": "Parse Inline Images",
+          "name": "parse_inline",
+          "type": "checkbox",
+          "tooltip": "Select this option, i.e., set it to True, to retrieve the body of the emails including inline images, from the Exchange server. By default, this is set to False (option is unchecked).",
+          "description": "Select this option, i.e., set it to True, to retrieve the body of the emails including inline images, from the Exchange server. By default, this is set to False (the option is unchecked).",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "value": ""
+        },
+        {
+          "title": "Extract Attachment Data",
+          "tooltip": "Select this option, i.e., set it to True (default) to also extract the attachment data for the searched emails, if the type of the attachment is eml or msg.",
+          "description": "Select this option, i.e., set it to True (default) to also extract the attachment data for the searched emails, if the type of the attachment is eml or msg.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "extract_attach_data",
+          "value": false
+        },
+        {
+          "title": "Exclude Absolute Path in Output",
+          "description": "Select this checkbox if you want to exclude the absolute path from this operation's output. This helps to improve the performance of connector operations, especially in the case of large mailboxes. By default, this checkbox is unchecked.",
+          "tooltip": "When the absolute path is excluded, this may improve performance if the mailbox size is large. Defaults to unchecked.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "value": false,
+          "name": "exclude_absolute_path"
+        },
+        {
+          "title": "Save Email",
+          "tooltip": "Select this option, i.e., set it to True(default) to save the email as a file in the FortiSOAR Attachment module.",
+          "description": "Select this option, i.e., set it to True(default) to save the email as a file in the Attachments module.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "save_as_attachment",
+          "value": false
+        },
+        {
+          "title": "Limit",
+          "tooltip": "Maximum number of emails, based on your filter criterion, you want to include in the output of this operation. If you do not specify anything in this field then all emails based on your filter criterion will be included in the output of this operation.",
+          "description": "The maximum number of emails, based on your filter criterion, you want to include in the output of this operation. If you do not specify anything in this field then all emails based on your filter criterion will be included in the output of this operation.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "integer",
+          "name": "range"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "move_email",
+      "title": "Move Email",
+      "description": "Moves an email from a specified folder to a specified folder, based on the message ID and the source and destination folder you have specified.",
+      "category": "miscellaneous",
+      "annotation": "move_email",
+      "parameters": [
+        {
+          "title": "Source Email Address",
+          "description": "(Optional) The email address from which you want to move the specified email.\nImportant: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365? article.",
+          "tooltip": "Email address from which you want to move the specified email. Important: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "source_email"
+        },
+        {
+          "title": "Source",
+          "description": "Source folder on the Exchange server from where you want to move the email. To specify the source, you can choose to specify either the Folder Name or Folder Path. If you choose Folder Name, then in the Source Folder Name parameter, specify the name of the source folder on the Exchange server from where you want to move the email. If you choose Folder Path, then in the Source Folder Path parameter, specify the path of the source folder on the Exchange server from where you want to move the email.",
+          "tooltip": "Select source as folder name or folder path.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "select",
+          "name": "source",
+          "options": [
+            "Folder Path",
+            "Folder Name"
+          ],
+          "value": "Folder Name",
+          "onchange": {
+            "Folder Name": [
+              {
+                "title": "Source Folder Name",
+                "description": "Source folder name on the Exchange server from where you want to move the email.",
+                "tooltip": "Source folder on the Exchange server from where you want to move the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "Inbox",
+                "name": "source_folder"
+              }
+            ],
+            "Folder Path": [
+              {
+                "title": "Source Folder Path",
+                "description": "Source folder path on the Exchange server from where you want to move the email.",
+                "tooltip": "Source folder on the Exchange server from where you want to move the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "/root/Top of Information Store/Inbox",
+                "name": "source_folder_path"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Message ID",
+          "description": "The ID of the email that you want to move.",
+          "tooltip": "ID of the email that you want to move.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        },
+        {
+          "title": "Destination Email Address",
+          "description": "(Optional) Email address to which you want to move the specified email.\nImportant: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365? article.",
+          "tooltip": "Email address to which you want to move the specified email. Important: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "target_email"
+        },
+        {
+          "title": "Destination",
+          "description": "Select destination as folder name or folder path on the Exchange server to which you want to move the email.",
+          "tooltip": "Select destination as folder name or folder path on the Exchange server to which you want to move the email.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "name": "destination",
+          "type": "select",
+          "options": [
+            "Folder Path",
+            "Folder Name"
+          ],
+          "value": "Folder Name",
+          "onchange": {
+            "Folder Name": [
+              {
+                "title": "Destination Folder Name",
+                "description": "Destination folder name on the Exchange server to which you want to move the email.",
+                "tooltip": "Destination folder on the Exchange server to which you want to move the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "Drafts",
+                "name": "dest_folder"
+              }
+            ],
+            "Folder Path": [
+              {
+                "title": "Destination Folder Path",
+                "description": "Source folder path on the Exchange server from where you want to move the email.",
+                "tooltip": "Source folder on the Exchange server from where you want to move the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "/root/Top of Information Store/Drafts",
+                "name": "destination_folder_path"
+              }
+            ]
+          }
+        }
+      ],
+      "output_schema": {
+        "message": ""
+      },
+      "enabled": true
+    },
+    {
+      "operation": "copy_email",
+      "title": "Copy Email",
+      "description": "Copy an email from a specified folder to a specified folder, based on the message ID and the source and destination folder you have specified.",
+      "category": "miscellaneous",
+      "annotation": "copy_email",
+      "parameters": [
+        {
+          "title": "Source Email Address",
+          "description": "(Optional) The email address from which you want to copy the specified email.\nImportant: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365? article.",
+          "tooltip": "Email address from which you want to copy the specified email. Important: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "source_email"
+        },
+        {
+          "title": "Source",
+          "description": "Source folder on the Exchange server from where you want to copy the email. To specify the source, you can choose to specify either the Folder Name or Folder Path. If you choose Folder Name, then in the Source Folder Name parameter, specify the name of the source folder on the Exchange server from where you want to copy the email. If you choose Folder Path, then in the Source Folder Path parameter, specify the path of the source folder on the Exchange server from where you want to copy the email.",
+          "tooltip": "Source folder on the Exchange server from where you want to copy the email. To specify the source, you can choose to specify either the Folder Name or Folder Path.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "select",
+          "name": "source",
+          "options": [
+            "Folder Path",
+            "Folder Name"
+          ],
+          "value": "Folder Name",
+          "onchange": {
+            "Folder Name": [
+              {
+                "title": "Source Folder Name",
+                "description": "Source folder on the Exchange server from where you want to copy the email. To specify the source, you can choose to specify either the Folder Name or Folder Path.\nIf you choose Folder Name, then in the Source Folder Name parameter, specify the name of the source folder on the Exchange server from where you want to move the email.\nIf you choose Folder Path, then in the Source Folder Path parameter, specify the path of the source folder on the Exchange server from where you want to copy the email.",
+                "tooltip": "Source folder on the Exchange server from where you want to copy the email. To specify the source, you can choose to specify either the Folder Name or Folder Path.\nIf you choose Folder Name, then in the Source Folder Name parameter, specify the name of the source folder on the Exchange server from where you want to move the email.\nIf you choose Folder Path, then in the Source Folder Path parameter, specify the path of the source folder on the Exchange server from where you want to copy the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "Inbox",
+                "name": "source_folder"
+              }
+            ],
+            "Folder Path": [
+              {
+                "title": "Source Folder Path",
+                "description": "Source Folder Path parameter, specify the path of the source folder on the Exchange server from where you want to copy the email. \n",
+                "tooltip": "Source Folder Path parameter, specify the path of the source folder on the Exchange server from where you want to copy the email. \n",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "/root/Top of Information Store/Inbox",
+                "name": "source_folder_path"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Message ID",
+          "description": "The ID of the email that you want to copy.",
+          "tooltip": "ID of the email that you want to copy.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        },
+        {
+          "title": "Destination Email Address",
+          "description": "(Optional) Email address to which you want to copy the specified email.\nImportant: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365? article.",
+          "tooltip": "Email address to which you want to copy the specified email. Important: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "target_email"
+        },
+        {
+          "title": "Destination",
+          "description": "The destination folder on the Exchange server to which you want to copy the email. To specify the destination, you can choose to specify either the Folder Name or Folder Path. If you choose Folder Name, then in the Destination Folder Name parameter, specify the name of the destination folder on the Exchange server to which you want to copy the email. If you choose Folder Path, then in the Destination Folder Path parameter, specify the path of the destination folder on the Exchange server to which you want to copy the email.",
+          "tooltip": "Destination folder on the Exchange server to which you want to copy the email. To specify the destination, you can choose to specify either the Folder Name or Folder Path.\n",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "name": "destination",
+          "type": "select",
+          "options": [
+            "Folder Path",
+            "Folder Name"
+          ],
+          "value": "Folder Name",
+          "onchange": {
+            "Folder Name": [
+              {
+                "title": "Destination Folder Name",
+                "description": "Destination Folder Name parameter, specify the name of the destination folder on the Exchange server to which you want to copy the email.",
+                "tooltip": "Destination Folder Name parameter, specify the name of the destination folder on the Exchange server to which you want to copy the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "Drafts",
+                "name": "dest_folder"
+              }
+            ],
+            "Folder Path": [
+              {
+                "title": "Destination Folder Path",
+                "description": "Destination Folder Path parameter, specify the path of the destination folder on the Exchange server to which you want to copy the email.",
+                "tooltip": "Destination Folder Path parameter, specify the path of the destination folder on the Exchange server to which you want to copy the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "placeholder": "/root/Top of Information Store/Drafts",
+                "name": "destination_folder_path"
+              }
+            ]
+          }
+        }
+      ],
+      "output_schema": {
+        "message": ""
+      },
+      "enabled": true
+    },
+    {
+      "operation": "delete_email",
+      "title": "Delete Email",
+      "description": "Deletes an email from a specified folder in your Exchange account, based on the input parameters, such as message ID and delete type, you have specified.",
+      "category": "investigation",
+      "annotation": "delete_email",
+      "parameters": [
+        {
+          "title": "Message ID",
+          "tooltip": "ID of the email that you want to delete from an Exchange account.",
+          "description": "The ID of the email that you want to delete from an Exchange account.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        },
+        {
+          "title": "Delete Type",
+          "description": "Type of Delete that you want to use to delete the email. You can choose from the following options: Soft Delete, Hard Delete, or Move To Trash.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "tooltip": "Soft Delete - Delete, but keep a copy in the recoverable items folder, Hard Delete - Delete, Move To Trash - Move to the trash folder",
+          "type": "select",
+          "name": "delete_type",
+          "options": [
+            "Soft Delete",
+            "Hard Delete",
+            "Move To Trash"
+          ],
+          "value": "Move To Trash"
+        },
+        {
+          "title": "Folder Name",
+          "description": "(Optional) Folder in the Exchange account from which you want to delete the email. By default, this is set as Inbox.",
+          "tooltip": "(Optional) Folder in the Exchange account from which you want to delete the email. By default, this is set as Inbox.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "placeholder": "Inbox",
+          "type": "text",
+          "name": "folder_name"
+        },
+        {
+          "title": "Target Email Address",
+          "description": "(Optional) The email address from which you want to delete the specified email.\nImportant: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365? article.",
+          "tooltip": "Email address from which you want to delete the specified email. Important: The Exchange account that you have specified in the configuration parameters and using which the connector has logged into Exchange must have Impersonation rights on this email address. For information on how to grant Impersonation rights in Office 365, see the How to Grant Application Impersonation Rights in Office 365 article.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "target_email"
+        }
+      ],
+      "output_schema": {
+        "message": ""
+      },
+      "enabled": true
+    },
+    {
+      "operation": "create_calendar_event",
+      "title": "Create Calendar Event",
+      "description": "Creates an event in a calendar on the Exchange Server, based on input parameters, such as subject, from date, and to date, you have specified.",
+      "category": "investigation",
+      "annotation": "create_event",
+      "output_schema": {
+        "message": ""
+      },
+      "parameters": [
+        {
+          "title": "Subject",
+          "description": "The subject line of the event that you want to create on the Exchange server.",
+          "required": true,
+          "editable": true,
+          "tooltip": "Subject line of the event that you want to create on the Exchange server.",
+          "visible": true,
+          "type": "text",
+          "name": "subject"
+        },
+        {
+          "title": "Start Date",
+          "required": true,
+          "editable": true,
+          "tooltip": "Start date and time (In UTC Format) of the event that you want to create on the Exchange server.",
+          "description": "Start date and time of the event that you want to create on the Exchange server.",
+          "visible": true,
+          "type": "datetime",
+          "name": "start_date"
+        },
+        {
+          "title": "End Date",
+          "required": true,
+          "editable": true,
+          "tooltip": "End date and time (In UTC Format) of the event that you want to create on the Exchange server.",
+          "description": "End date and time of the event that you want to create on the Exchange server.",
+          "visible": true,
+          "type": "datetime",
+          "name": "end_date"
+        },
+        {
+          "title": "Required Attendees",
+          "description": "Email IDs of the members who are required to attend the event. You must add the email IDs in the CSV or list format. For example, @xyz.com, def@lmn.com",
+          "tooltip": "Email IDs of the members who are required to attend the event. You must add the email IDs in the CSV or list format. For example, @xyz.com, def@lmn.com",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "required_attendees"
+        },
+        {
+          "title": "Optional Attendees",
+          "tooltip": "(Optional) Email IDs of the optional members who can attend the event. You must add the email IDs in the CSV or list format.",
+          "description": "(Optional) Email IDs of the optional members who can attend the event. You must add the email IDs in the CSV or list format.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "optional_attendees"
+        },
+        {
+          "title": "Body",
+          "tooltip": "(Optional) Details of the event that you want to create on the Exchange server.",
+          "description": "(Optional) Details of the event that you want to create on the Exchange server.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "richtext",
+          "name": "body",
+          "placeholder": "Description"
+        },
+        {
+          "title": "Location",
+          "description": "(Optional) Location of the event that you want to create on the Exchange server.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "location",
+          "tooltip": "(Optional) Location of the event that you want to create on the Exchange server."
+        },
+        {
+          "title": "Categories",
+          "tooltip": "Category of the event that you want to create on the Exchange server. You must add the categories in the CSV or list format. For example, Blue category, Green Category, etc.",
+          "description": "(Optional) Category of the event that you want to create on the Exchange server. You must add the categories in the CSV or list format. For example, Blue category, Green Category, etc.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "placeholder": "Blue category",
+          "name": "categories"
+        },
+        {
+          "title": "Show As",
+          "tooltip": "(Optional) Status of the attendees when they are attending this event. You can choose one of the following options: Free, Working elsewhere, Tentative, Busy, or OOF.",
+          "description": "(Optional) Status of the attendees when they are attending this event. You can choose one of the following options: Free, Working elsewhere, Tentative, Busy, or OOF.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "select",
+          "options": [
+            "Free",
+            "WorkingElsewhere",
+            "Tentative",
+            "Busy",
+            "OOF"
+          ],
+          "value": "Free",
+          "name": "legacy_free_busy_status"
+        },
+        {
+          "title": "Reminder",
+          "description": "(Optional) Time before the event starts when you want to set a reminder for the attendees. You can choose one of the following options: 0 minutes, 5 minutes, 10 minutes, 15 minutes, 30 minutes, 1 hour, 2 hour, 3 hour, 4 hour, 8 hour, 12 hour, 1 day, 2 day, 3 day, 1 week, or 2 week.",
+          "tooltip": "(Optional) Time before the event starts when you want to set a reminder for the attendees. You can choose one of the following options: 0 minutes, 5 minutes, 10 minutes, 15 minutes, 30 minutes, 1 hour, 2 hour, 3 hour, 4 hour, 8 hour, 12 hour, 1 day, 2 day, 3 day, 1 week, or 2 week.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "select",
+          "options": [
+            "0 minutes",
+            "5 minutes",
+            "10 minutes",
+            "15 minutes",
+            "30 minutes",
+            "1 hour",
+            "2 hour",
+            "3 hour",
+            "4 hour",
+            "8 hour",
+            "12 hour",
+            "1 day",
+            "2 day",
+            "3 day",
+            "1 week",
+            "2 week"
+          ],
+          "value": "10 minutes",
+          "name": "reminder_min"
+        },
+        {
+          "title": "Is All Day",
+          "description": "If you select this option, i.e., set it to True, then this sets the event as a full-day event. By default, this is set to False.",
+          "tooltip": "If you select this option, i.e., set it to True, then this sets the event as a full-day event. By default, this is set to False.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "is_all_day",
+          "value": false
+        },
+        {
+          "title": " Is Private",
+          "description": "If you select this option, i.e., set it to True, then this sets the event as a private event, and it can be viewed only by its attendees.",
+          "tooltip": "If you select this option, i.e., set it to True, then this sets the event as a private event, and it can be viewed only by its attendees.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "private",
+          "value": true
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_calendar_events",
+      "title": "Get Calendar Events",
+      "description": "Gets events from the calendar on the Exchange server, based on the filter criteria, such as subject, from time, and to time, you have specified.",
+      "category": "investigation",
+      "annotation": "get_events",
+      "output_schema": [
+        {
+          "sensitivity": "",
+          "Required attendees": [],
+          "Importance": "",
+          "Reminder is set": "",
+          "Optional attendees": [],
+          "Subject": "",
+          "Reminder minutes before start": "",
+          "Attachments": [
+            {
+              "content_type": "",
+              "Name": "",
+              "size": ""
+            }
+          ],
+          "Categories": [],
+          "Organizer": "",
+          "Legacy status": "",
+          "Body": "",
+          "Start": "",
+          "Location": "",
+          "End": "",
+          "Is all day": ""
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Subject",
+          "description": "Subject text based on which you want to filter events on the Exchange server.",
+          "tooltip": "Subject text based on which you want to filter events on the Exchange server.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "subject"
+        },
+        {
+          "title": "From Time",
+          "description": "Start date and time from when you want to retrieve events from the Exchange server.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "datetime",
+          "name": "from_time",
+          "tooltip": "Start date and time (In UTC Format) from when you want to retrieve events from the Exchange server."
+        },
+        {
+          "title": "To Time",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "datetime",
+          "name": "to_time",
+          "tooltip": "End date and time (In UTC Format) till when you want to retrieve events from the Exchange server.",
+          "description": "End date and time till when you want to retrieve events from the Exchange server."
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_contacts",
+      "title": "Get Contacts",
+      "description": "Retrieves the list of contacts from the mailbox associated with your Exchange account.",
+      "category": "investigation",
+      "annotation": "get_contacts",
+      "output_schema": [
+        {
+          "CLASS": "",
+          "TEL": "",
+          "PRODID": "",
+          "FN": "",
+          "N": "",
+          "EMAIL": "",
+          "MAILER": "",
+          "REV": "",
+          "LABEL": "",
+          "VERSION": "",
+          "ADR": "",
+          "ORG": ""
+        }
+      ],
+      "parameters": [],
+      "enabled": true
+    },
+    {
+      "operation": "get_email",
+      "title": "Get Unread Emails (Deprecated)",
+      "description": "Gets all unread emails from your Exchange account. You can also mark the retrieved Unread emails as Read.\nImportant: This operation has been retained since the new Get Unread Emails has an updated output schema. If you have used this operation earlier in an existing playbook, then the playbook would fail if this operation is removed.",
+      "category": "investigation",
+      "annotation": "get_email",
+      "output_schema": [
+        {
+          "epilogue": "",
+          "attachment_files": [],
+          "body": {
+            "html": "",
+            "text": "",
+            "json": "",
+            "inline_images": [
+              {
+                "file": "",
+                "metadata": {
+                  "md5": "",
+                  "sha1": "",
+                  "sha256": "",
+                  "filename": "",
+                  "content_type": "",
+                  "content_length": ""
+                }
+              }
+            ]
+          },
+          "preamble": "",
+          "headers": {
+            "X-Received": "",
+            "MIME-Version": "",
+            "Message-ID": "",
+            "X-Exchange-Antispam-Report-Test": "",
+            "X-Exchange-Antispam-Report-CFA-Test": "",
+            "X-MS-Office365-Filtering-Correlation-Id": "",
+            "X-MS-Exchange-CrossTenant-Network-Message-Id": "",
+            "X-Microsoft-Exchange-Diagnostics": [],
+            "X-MS-Exchange-CrossTenant-Id": "",
+            "X-MS-Exchange-CrossTenant-FromEntityHeader": "",
+            "SpamDiagnosticMetadata": "",
+            "X-Gm-Message-State": "",
+            "SpamDiagnosticOutput": "",
+            "To": "",
+            "X-Microsoft-Antispam": "",
+            "Subject": "",
+            "From": "",
+            "Received": [],
+            "X-MS-Exchange-CrossTenant-OriginalArrivalTime": "",
+            "X-Microsoft-Antispam-Message-Info": [],
+            "Authentication-Results": "",
+            "X-MS-PublicTrafficType": "",
+            "Received-SPF": "",
+            "X-MS-TrafficTypeDiagnostic": "",
+            "X-MS-Exchange-Transport-CrossTenantHeadersStamped": "",
+            "Sender": "",
+            "X-MS-Exchange-Organization-AuthSource": "",
+            "X-MS-Exchange-Organization-MessageDirectionality": "",
+            "X-MS-Exchange-Organization-SCL": "",
+            "Auto-Submitted": "",
+            "X-Forefront-Antispam-Report": "",
+            "X-EOPTenantAttributedMessage": "",
+            "DKIM-Signature": [],
+            "X-Google-Smtp-Source": "",
+            "Reply-To": "",
+            "X-MS-Exchange-Processed-By-BccFoldering": "",
+            "X-Google-DKIM-Signature": "",
+            "X-MS-Exchange-Organization-AuthAs": "",
+            "Content-Type": "",
+            "X-MS-Exchange-Organization-Network-Message-Id": "",
+            "Return-Path": "",
+            "X-EOPAttributedMessage": "",
+            "X-MS-Exchange-Transport-EndToEndLatency": ""
+          },
+          "item_id": "",
+          "attachments": [
+            {
+              "file": "",
+              "metadata": {
+                "sha256": "",
+                "content_length": "",
+                "content_type": "",
+                "sha1": "",
+                "filename": "",
+                "md5": ""
+              },
+              "json": "",
+              "text": ""
+            }
+          ],
+          "email_as_attachment": "",
+          "folder_path": "",
+          "parsed_attachment_data": []
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Source",
+          "name": "source",
+          "type": "select",
+          "tooltip": "Retrieve the unread emails for selected folder from the Exchange server.",
+          "description": "Select the source folder from which you want to retrieve unread emails from your Exchange account. You can choose from All, Inbox, Sent, Drafts, Trash, or Custom Folder. By default, this is set as Inbox. If you select All, then this operation will search for emails across all folders associated with your Exchange account. If you select Custom Folder, then you must specify the folder in your Exchange account from which you want to retrieve unread emails.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "Inbox",
+            "Sent",
+            "Drafts",
+            "Trash",
+            "Custom Folder"
+          ],
+          "value": "Inbox",
+          "onchange": {
+            "Custom Folder": [
+              {
+                "title": "Folder Name",
+                "tooltip": "Select the source folder from which you want to retrieve unread emails from your Exchange account. You can choose from All, Inbox, Sent, Drafts, Trash, Custom Folder. By default, this is set as Inbox. If you select All, then this operation will search for emails across all folders associated with your Exchange account. If you select Custom Folder, then you must specify the folder in your Exchange account from which you want to retrieve unread emails.",
+                "description": "Select the source folder from which you want to retrieve unread emails from your Exchange account. You can choose from All, Inbox, Sent, Drafts, Trash, Custom Folder. By default, this is set as Inbox. If you select All, then this operation will search for emails across all folders associated with your Exchange account. If you select Custom Folder, then you must specify the folder in your Exchange account from which you want to retrieve unread emails.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "source_folder",
+                "value": ""
+              }
+            ]
+          }
+        },
+        {
+          "title": "Mark as Read",
+          "tooltip": "Select this option, i.e., set it to True (default) to retrieve the unread emails from the Exchange account and also marks these emails as Read. By default, this is set to True.",
+          "description": "Select this option, i.e., set it to True (default) to retrieve the unread emails from the Exchange account and also mark these emails as Read. By default, this is set to True.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "mark_read",
+          "value": true
+        },
+        {
+          "title": "Pull Oldest First",
+          "name": "pull_oldest",
+          "type": "checkbox",
+          "tooltip": "Select this option, i.e., set it to True to retrieve the oldest unread email first from the Exchange account, i.e., if this operation is checked, then the unread emails get sorted by datetime from oldest to newest. By default, this is unchecked, i.e., it is set as False.",
+          "description": "Select this option, i.e., set it to True to retrieve the oldest unread email first from the Exchange account, i.e., if this operation is checked, then the unread emails get sorted by DateTime from oldest to newest. By default, this is unchecked, i.e., it is set as False.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "value": false
+        },
+        {
+          "title": "Limit",
+          "tooltip": "Maximum number of emails, based on your filter criterion, you want to include in the output of this operation. If you do not specify anything in this field then all emails based on your filter criterion will be included in the output of this operation.",
+          "description": "(Optional) The maximum number of emails, based on your filter criterion, you want to include in the output of this operation. If you do not specify anything in this field then all emails based on your filter criterion will be included in the output of this operation.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "integer",
+          "name": "limit"
+        },
+        {
+          "title": "Parse Inline Images",
+          "name": "parse_inline",
+          "type": "checkbox",
+          "tooltip": "Select this option, i.e., set it to True (default) to also extract the attachment data for the unread emails, if the type of the attachment is eml or msg.",
+          "description": "Select this option, i.e., set it to True, to retrieve the body of the unread emails including inline images, from the Exchange account. By default, this is set to False (the option is unchecked).",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "value": ""
+        },
+        {
+          "title": "Save Email",
+          "tooltip": "Select this option, i.e., set it to True(default) to save the email as a file in the FortiSOAR Attachment module.",
+          "description": "Select this option, i.e., set it to True(default) to save the email as a file in the Attachments module.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "save_as_attachment",
+          "value": false
+        },
+        {
+          "title": "Extract Attachment Data",
+          "tooltip": "Extracts the attachment data if the type of the attachment is eml or msg",
+          "description": "Select this option, i.e., set it to True (default) to also extract the attachment data for the unread emails, if the type of the attachment is eml or msg.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "type": "checkbox",
+          "name": "extract_attach_data",
+          "value": true
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_folder_metadata",
+      "title": "Get Folder Metadata",
+      "description": "Retrieves the count of all the emails, including unread emails and subfolder details, from your Exchange account for the folder you have specified.",
+      "category": "investigation",
+      "annotation": "get_folder_metadata",
+      "output_schema": {
+        "folder": "",
+        "total_email_count": "",
+        "unread_email_count": "",
+        "child_folder_count": "",
+        "child_folder_metadata": []
+      },
+      "parameters": [
+        {
+          "title": "Source",
+          "name": "source",
+          "type": "select",
+          "description": "Select the source folder whose total email count, including unread emails and subfolders details you want to retrieve from your Exchange account. You can choose from Inbox, Sent, Drafts, Trash, or Custom Folder. By default, this is set as Inbox. If you select Custom Folder, then you must specify the folder in your Exchange account from which you want to retrieve unread emails.",
+          "tooltip": "Select the source folder whose total email count, including unread emails and subfolders details you want to retrieve from your Exchange account. You can choose from Inbox, Sent, Drafts, Trash, Custom Folder. By default, this is set as Inbox.If you select Custom Folder, then you must specify the folder in your Exchange account from which you want to retrieve unread emails.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "Inbox",
+            "Sent",
+            "Drafts",
+            "Trash",
+            "Custom Folder"
+          ],
+          "value": "Inbox",
+          "onchange": {
+            "Custom Folder": [
+              {
+                "title": "Folder Name",
+                "tooltip": "Name of the custom folder for which you want to retrieve the count of all emails, including unread emails and subfolder details from the Exchange mail server",
+                "description": "Name of the custom folder for which you want to retrieve the count of all emails, including unread emails and subfolder details from the Exchange mail server",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "source_folder",
+                "value": ""
+              }
+            ]
+          }
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "add_category",
+      "title": "Add Category",
+      "description": "Assigns categories to an email in your Exchange account based on the message ID and categories that you have specified.",
+      "category": "containment",
+      "annotation": "add_category",
+      "output_schema": {
+        "status": "",
+        "message": "",
+        "message_id": "",
+        "categories": [],
+        "subject": ""
+      },
+      "parameters": [
+        {
+          "title": "Source",
+          "name": "source",
+          "type": "select",
+          "description": "(Optional) Name of the source folder from which you want to retrieve the email to which you want to add categories. You can choose from the following options: All, Inbox, Sent, Drafts, Trash, or Custom Folder. If you choose Custom Folder, then you must specify the following parameter:  \n\nFolder Name: Name of the folder from which you want to retrieve the email.",
+          "tooltip": "Name of the source folder from which you want to retrieve the email to which you want to add categories.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "All",
+            "Inbox",
+            "Sent",
+            "Drafts",
+            "Trash",
+            "Custom Folder"
+          ],
+          "value": "Inbox",
+          "onchange": {
+            "Custom Folder": [
+              {
+                "title": "Folder Name",
+                "tooltip": "Name of the folder from which you want to retrieve the email.",
+                "description": "Name of the folder from which you want to retrieve the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "source_folder",
+                "value": ""
+              }
+            ]
+          }
+        },
+        {
+          "title": "Message ID",
+          "tooltip": "Message ID of the email to which you want to assign the specified categories.",
+          "description": "The message ID of the email to which you want to assign the specified categories.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        },
+        {
+          "title": "Categories",
+          "tooltip": "CSV list of categories that you want to assign to the specified email.",
+          "description": "The CSV list of categories that you want to assign to the specified email.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "categories",
+          "placeholder": "e.g. [category1, category2] or category1, category2"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_category",
+      "title": "Get Category",
+      "description": "Retrieves categories associated with the specified email in your Exchange account based on the message ID that you have specified.",
+      "category": "investigation",
+      "annotation": "get_category",
+      "output_schema": {
+        "status": "",
+        "message": "",
+        "message_id": "",
+        "categories": [],
+        "subject": ""
+      },
+      "parameters": [
+        {
+          "title": "Source",
+          "name": "source",
+          "type": "select",
+          "description": "(Optional) Name of the source folder from which you want to retrieve the email whose categories you want to retrieve. You can choose from the following options: All, Inbox, Sent, Drafts, Trash, or Custom Folder. If you choose Custom Folder, then you must specify the following parameter:  \n\nFolder Name: Name of the folder from which you want to retrieve the email.",
+          "tooltip": "Name of the source folder from which you want to retrieve the email whose categories you want to retrieve",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "All",
+            "Inbox",
+            "Sent",
+            "Drafts",
+            "Trash",
+            "Custom Folder"
+          ],
+          "value": "Inbox",
+          "onchange": {
+            "Custom Folder": [
+              {
+                "title": "Folder Name",
+                "tooltip": "Name of the folder from which you want to retrieve the email.",
+                "description": "Name of the folder from which you want to retrieve the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "source_folder",
+                "value": ""
+              }
+            ]
+          }
+        },
+        {
+          "title": "Message ID",
+          "tooltip": "Message ID of the email whose categories you want to retrieve.",
+          "description": "The message ID of the email whose categories you want to retrieve.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "remove_category",
+      "title": "Remove Category",
+      "description": "Removes categories from an email in your Exchange account based on the message ID and categories that you have specified.",
+      "category": "investigation",
+      "annotation": "remove_category",
+      "output_schema": {
+        "status": "",
+        "message": "",
+        "message_id": "",
+        "removed": [],
+        "not_found": [],
+        "subject": ""
+      },
+      "parameters": [
+        {
+          "title": "Source",
+          "name": "source",
+          "type": "select",
+          "description": "(Optional) Name of the source folder from which you want to retrieve the email whose categories you want to remove. You can choose from the following options: All, Inbox, Sent, Drafts, Trash, or Custom Folder. If you choose Custom Folder, then you must specify the following parameter:  \n\nFolder Name: Name of the folder from which you want to retrieve the email.",
+          "tooltip": "Name of the source folder from which you want to retrieve the email whose categories you want to remove.",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "All",
+            "Inbox",
+            "Sent",
+            "Drafts",
+            "Trash",
+            "Custom Folder"
+          ],
+          "value": "Inbox",
+          "onchange": {
+            "Custom Folder": [
+              {
+                "title": "Folder Name",
+                "tooltip": "Name of the folder from which you want to retrieve the email.",
+                "description": "Name of the folder from which you want to retrieve the email.",
+                "required": true,
+                "editable": true,
+                "visible": true,
+                "type": "text",
+                "name": "source_folder",
+                "value": ""
+              }
+            ]
+          }
+        },
+        {
+          "title": "Message ID",
+          "tooltip": "Message ID of the email from which you want to remove the specified categories.",
+          "description": "Message ID of the email from which you want to remove the specified categories.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "message_id"
+        },
+        {
+          "title": "Categories",
+          "tooltip": "CSV list of categories that you want to remove from the specified email.",
+          "description": "The CSV list of categories that you want to remove from the specified email.",
+          "required": true,
+          "editable": true,
+          "visible": true,
+          "type": "text",
+          "name": "categories",
+          "placeholder": "e.g. [category1, category2] or category1, category2"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "create_folder",
+      "title": "Create Folder",
+      "description": "Creates a new folder in the specified mailbox based on the mailbox name, parent folder path, and the folder name that you have specified.",
+      "category": "investigation",
+      "annotation": "create_folder",
+      "output_schema": {
+        "status": "",
+        "message": "",
+        "folder_path": "",
+        "folder_creation_status": ""
+      },
+      "parameters": [
+        {
+          "title": "Target Email Address",
+          "name": "target_email",
+          "type": "text",
+          "tooltip": "Specify the email address of the mailbox to create a new folder. If this value is not specified, the default value of Email Address from configuration is used.",
+          "description": "(Optional) Specify the email address of the mailbox to create a new folder. If this value is not specified, the default value of Email Address from configuration is used.",
+          "required": false,
+          "editable": true,
+          "visible": true
+        },
+        {
+          "title": "Parent Folder Path",
+          "name": "parent_folder_path",
+          "type": "text",
+          "tooltip": "Specify the path of the parent folder in which you want to create the new folder. If the parent folder path is not provided, /root/Top of Information Store is considered as the default value.",
+          "description": "(Optional) Specify the path of the parent folder in which you want to create the new folder. If the parent folder path is not provided, /root/Top of Information Store is considered as the default value.",
+          "placeholder": "/root/Top of Information Store/Inbox or Inbox/Subfolder",
+          "required": false,
+          "editable": true,
+          "visible": true
+        },
+        {
+          "title": "Folder Name",
+          "name": "folder_name",
+          "type": "text",
+          "tooltip": "Specify a name for the newly created folder.",
+          "description": "Specify a name for the newly created folder.",
+          "required": true,
+          "editable": true,
+          "visible": true
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_email_templates",
+      "title": "Get Email Templates",
+      "description": "Get available email templates",
+      "category": "investigation",
+      "annotation": "get_email_templates",
+      "is_config_required": false,
+      "output_schema": {},
+      "enabled": true,
+      "visible": false,
+      "parameters": []
+    }
+  ]
+}

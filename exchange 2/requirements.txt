@@ -1,0 +1,7 @@
+backports-datetime-fromisoformat==1.0.0
+exchangelib>=5.4.0
+vobject>=0.9.5
+dnspython>=2.3.0
+compoundfiles
+bs4
+python-magic

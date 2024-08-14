@@ -1,0 +1,316 @@
+{
+  "type": "workflow_collections",
+  "data": [
+    {
+      "@context": "/api/3/contexts/WorkflowCollection",
+      "@type": "WorkflowCollection",
+      "name": "0001 Raaid",
+      "description": null,
+      "visible": true,
+      "image": null,
+      "uuid": "8138d3f6-7dc5-44a0-820c-4fe01143b345",
+      "id": 159,
+      "createDate": 1705404850.789562,
+      "modifyDate": 1709892056.42368,
+      "deletedAt": null,
+      "importedBy": [],
+      "recordTags": [],
+      "workflows": [
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "Get IOCs into CSV File",
+          "aliasName": null,
+          "tag": null,
+          "description": null,
+          "isActive": true,
+          "debug": true,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [],
+          "synchronous": false,
+          "lastModifyDate": 1723628715,
+          "collection": "/api/3/workflow_collections/8138d3f6-7dc5-44a0-820c-4fe01143b345",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/07148dc8-8dfe-4c83-905d-40e3b8c6213c",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "convert html to dict",
+              "description": null,
+              "arguments": {
+                "params": {
+                  "html": "{{vars.steps.HTML_Table.data['formatted_string'] |  replace('[.]','.') | replace('hxxp[:]','http:')}}"
+                },
+                "version": "3.2.6",
+                "connector": "cyops_utilities",
+                "operation": "html_table_to_dictionary",
+                "operationTitle": "Utils: Convert HTML Table to Dictionary",
+                "step_variables": []
+              },
+              "status": null,
+              "top": "520",
+              "left": "120",
+              "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+              "group": null,
+              "uuid": "4364d15f-41e6-47ab-b43f-444e0b551c60"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Excel Attachment",
+              "description": null,
+              "arguments": {
+                "params": {
+                  "name": "IOCs Excel",
+                  "filename": "/tmp/IOCs.xlsx",
+                  "description": "",
+                  "request_headers": "",
+                  "multipart_headers": "",
+                  "extra_multipart_fields": ""
+                },
+                "version": "3.2.6",
+                "connector": "cyops_utilities",
+                "operation": "create_cyops_attachment",
+                "operationTitle": "File: Create Attachment from File",
+                "step_variables": []
+              },
+              "status": null,
+              "top": "820",
+              "left": "120",
+              "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+              "group": null,
+              "uuid": "b99ca472-faf0-486f-b00c-de45f0b8bf52"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Excel Sheet",
+              "description": null,
+              "arguments": {
+                "config": "b5195722-9917-4e6e-ac0f-cddab46620ee",
+                "params": {
+                  "python_function": "import pandas as pd\nimport json\ndf = pd.json_normalize({{vars.steps.convert_html_to_dict.data}})\ndf = df[['Value','Type', 'Reputation', 'Country', 'Status']]\ndf.to_excel(\"/tmp/IOCs.xlsx\", index=False)"
+                },
+                "version": "2.1.0",
+                "connector": "code-snippet",
+                "operation": "python_inline",
+                "operationTitle": "Execute Python Code (Deprecated)",
+                "step_variables": []
+              },
+              "status": null,
+              "top": "680",
+              "left": "120",
+              "stepType": "/api/3/workflow_step_types/1fdd14cc-d6b4-4335-a3af-ab49c8ed2fd8",
+              "group": null,
+              "uuid": "154efe1d-2e28-4758-8993-8bc008718a1c"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Find Record",
+              "description": null,
+              "arguments": {
+                "query": {
+                  "sort": [],
+                  "limit": 30,
+                  "logic": "AND",
+                  "filters": [
+                    {
+                      "type": "primitive",
+                      "field": "alerts.id",
+                      "value": "{{vars.input.records[0].id}}",
+                      "operator": "eq",
+                      "_operator": "eq"
+                    }
+                  ]
+                },
+                "module": "indicators?$limit=30&$relationships=true&$fsr_max_relation_count=100",
+                "step_variables": []
+              },
+              "status": null,
+              "top": "180",
+              "left": "120",
+              "stepType": "/api/3/workflow_step_types/b593663d-7d13-40ce-a3a3-96dece928770",
+              "group": null,
+              "uuid": "e5d214af-48fa-4e97-950c-f3734f2ad2c3"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "HTML Table",
+              "description": null,
+              "arguments": {
+                "params": {
+                  "value": "<html><style>th, td {border: 1px solid #8d8d8d;padding: 8px;text-align: center;}.malicious {background-color:#D10000;color: white;}.suspicious {background-color: yellow;}.good {background-color: green; color: white;}</style><body><h2>IOCs Value and Reputation</h2><h3> Please Review and Approve Blocking of Malicious</h3><table border=\"1\"; align=\"center\"><tr><th>Value</th><th>Type</th><th>Reputation</th><th>Country</th><th>Status</th></tr>{% for item in vars.steps.Find_Record %}<tr><td {% if item.reputation.itemValue == 'Malicious' %} class=\"malicious\"{% elif item.reputation.itemValue == 'Suspicious' %} class=\"suspicious\"{% elif item.reputation.itemValue == 'Good' %} class=\"good\"{% endif %}>{{item.value | replace('.','[.]')  | replace('http:','hxxp[:]')}}</td><td {% if item.reputation.itemValue == 'Malicious' %} class=\"malicious\"{% elif item.reputation.itemValue == 'Suspicious' %} class=\"suspicious\"{% elif item.reputation.itemValue == 'Good' %} class=\"good\"{% endif %}>{{item.typeofindicator.itemValue}}</td><td {% if item.reputation.itemValue == 'Malicious' %} class=\"malicious\"{% elif item.reputation.itemValue == 'Suspicious' %} class=\"suspicious\"{% elif item.reputation.itemValue == 'Good' %} class=\"good\"{% endif %}>{{item.reputation.itemValue}}</td><td>{{item.country}}</td><td>{{item.indicatorStatus.itemValue}}</td></tr>{% endfor %}</table></body></html>"
+                },
+                "version": "3.2.6",
+                "connector": "cyops_utilities",
+                "operation": "format_richtext",
+                "operationTitle": "Utils: Format as RichText (Markdown)",
+                "step_variables": []
+              },
+              "status": null,
+              "top": "360",
+              "left": "120",
+              "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+              "group": null,
+              "uuid": "22d37521-a0bc-49b2-9108-1edabf9caa37"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Search email",
+              "description": null,
+              "arguments": {
+                "name": "Exchange",
+                "config": "346cb515-b15e-4dac-bf2c-0d5bb7230f66",
+                "params": {
+                  "query": "",
+                  "range": "",
+                  "folder": "",
+                  "body_text": "",
+                  "pull_oldest": false,
+                  "sender_text": "",
+                  "parse_inline": "",
+                  "query_method": "Basic",
+                  "subject_text": "Test",
+                  "target_email": "",
+                  "save_as_attachment": true,
+                  "extract_attach_data": false,
+                  "exclude_absolute_path": false
+                },
+                "version": "4.5.0",
+                "connector": "exchange",
+                "operation": "run_query",
+                "operationTitle": "Search Email",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "80",
+              "left": "460",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "group": null,
+              "uuid": "ba6ffe0e-a3fe-4d01-b1ed-c2b7c8c97952"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Start",
+              "description": null,
+              "arguments": {
+                "route": "69de06ea-b869-430a-a3a0-2af2133f7272",
+                "title": "Send IOCs Information on Email",
+                "resources": [
+                  "alerts"
+                ],
+                "__triggerLimit": true,
+                "inputVariables": [],
+                "step_variables": {
+                  "input": {
+                    "params": [],
+                    "records": "{{vars.input.records}}"
+                  }
+                },
+                "triggerOnSource": true,
+                "displayConditions": {
+                  "alerts": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": []
+                  }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "showToasterMessage": {
+                  "visible": false,
+                  "messageVisible": true
+                },
+                "triggerOnReplicate": false,
+                "singleRecordExecution": false
+              },
+              "status": null,
+              "top": "20",
+              "left": "120",
+              "stepType": "/api/3/workflow_step_types/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+              "group": null,
+              "uuid": "07148dc8-8dfe-4c83-905d-40e3b8c6213c"
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "convert html to dict -> Excel Sheet",
+              "targetStep": "/api/3/workflow_steps/154efe1d-2e28-4758-8993-8bc008718a1c",
+              "sourceStep": "/api/3/workflow_steps/4364d15f-41e6-47ab-b43f-444e0b551c60",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "7e6ac96e-b179-4584-8db7-b34c4c04daee"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Excel Sheet -> Excel Attachment",
+              "targetStep": "/api/3/workflow_steps/b99ca472-faf0-486f-b00c-de45f0b8bf52",
+              "sourceStep": "/api/3/workflow_steps/154efe1d-2e28-4758-8993-8bc008718a1c",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "bf35269f-de76-4a38-9b36-3389385ee4ad"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Find Record -> HTML Table",
+              "targetStep": "/api/3/workflow_steps/22d37521-a0bc-49b2-9108-1edabf9caa37",
+              "sourceStep": "/api/3/workflow_steps/e5d214af-48fa-4e97-950c-f3734f2ad2c3",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "1298ab2d-cc90-4ae6-8b16-c8ce8a08226d"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "HTML Table -> convert html to dict",
+              "targetStep": "/api/3/workflow_steps/4364d15f-41e6-47ab-b43f-444e0b551c60",
+              "sourceStep": "/api/3/workflow_steps/22d37521-a0bc-49b2-9108-1edabf9caa37",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "81348de2-00c5-4c0f-8412-c68f640657b2"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Search email -> Find Record",
+              "targetStep": "/api/3/workflow_steps/e5d214af-48fa-4e97-950c-f3734f2ad2c3",
+              "sourceStep": "/api/3/workflow_steps/ba6ffe0e-a3fe-4d01-b1ed-c2b7c8c97952",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "67c26878-7407-479d-9dab-d90b46561fb5"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Start -> Search email",
+              "targetStep": "/api/3/workflow_steps/ba6ffe0e-a3fe-4d01-b1ed-c2b7c8c97952",
+              "sourceStep": "/api/3/workflow_steps/07148dc8-8dfe-4c83-905d-40e3b8c6213c",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "bb4ff98e-f176-4aa9-a310-0e98c6b23b60"
+            }
+          ],
+          "groups": [],
+          "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+          "uuid": "97df6612-1351-4772-962b-6cab178400d5",
+          "id": 2557,
+          "createUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "createDate": 1723618563.81946,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1723628716.99297,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
+          "recordTags": []
+        }
+      ]
+    }
+  ],
+  "exported_tags": []
+}
